@@ -40,6 +40,22 @@ export interface WeaknessData {
   accuracy: number
 }
 
+export interface StudyGuideSubsection {
+  id: string
+  title: string
+  rules: string
+  explanation: string
+  fieldScenario: string
+  keyPoints: string[]
+}
+
+export interface StudyGuideSection {
+  section: string
+  title: string
+  description: string
+  subsections: StudyGuideSubsection[]
+}
+
 export interface UserProgress {
   totalQuestionsAnswered: number
   totalCorrect: number
