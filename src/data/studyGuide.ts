@@ -130,4 +130,150 @@ export const studyGuideSections: StudyGuideSection[] = [
       },
     ],
   },
+  {
+    section: '4',
+    title: 'Section 4 — Conductors',
+    description:
+      'Section 4 is the backbone of wire sizing in the CEC. It covers how to determine the maximum current a conductor can safely carry (ampacity), how to apply correction factors for heat, bundling, and ambient temperature, termination temperature limits, neutral conductor sizing, and the color coding system that identifies every wire in Canadian electrical installations.',
+    subsections: [
+      {
+        id: '4-scope-sizing',
+        title: 'Scope & Conductor Sizing',
+        rules: 'Rules 4-000 to 4-002',
+        explanation:
+          'Section 4 applies to conductors for services, feeders, branch circuits, and photovoltaic circuits. Think of it as the "sizing bible" — it tells you how fat your wire needs to be and how much current it can handle.\n\nThe scope covers five key areas:\n1. Maximum allowable conductor ampacity (how much current)\n2. Maximum conductor termination temperature (how hot at the connection point)\n3. Selection of neutral conductors\n4. Selecting conductor type for specific conditions of use\n5. Conductor identification (color coding)\n\nRule 4-002 sets the minimum wire sizes: No. 14 AWG for copper and No. 12 AWG for aluminum. Why is aluminum one size bigger? Because aluminum has about 61% the conductivity of copper — it needs more cross-sectional area to carry the same current safely.\n\nExceptions exist for flexible cord (No. 18 AWG minimum), equipment wire, and control circuits, which are allowed to be smaller because they carry lighter loads or are used in protected environments.',
+        fieldScenario:
+          'You\'re wiring a new commercial office. The foreman hands you a box of No. 16 AWG THHN copper wire and says "use this for the receptacle circuits." You stop him — Rule 4-002 requires a minimum of No. 14 AWG copper for general wiring. The No. 16 AWG is only suitable for control circuits, not branch circuits feeding receptacles.\n\nOn another job, a supplier delivers No. 14 AWG aluminum for a 15A branch circuit. Rule 4-002 says aluminum must be minimum No. 12 AWG — you reject the delivery and order the correct size.',
+        keyPoints: [
+          'Section 4 applies to services, feeders, branch circuits, and PV circuits (Rule 4-000)',
+          'Minimum copper conductor: No. 14 AWG (Rule 4-002)',
+          'Minimum aluminum conductor: No. 12 AWG (Rule 4-002)',
+          'Exceptions: flexible cord, equipment wire, and control circuit conductors may be smaller',
+          'Flexible cord minimum: No. 18 AWG copper; tinsel cord may be No. 27 AWG (Rule 4-010)',
+          'Cords for specific devices may be No. 20 AWG copper (Rule 4-010(b))',
+        ],
+      },
+      {
+        id: '4-ampacity',
+        title: 'Ampacity Tables & Selection',
+        rules: 'Rules 4-004(1) to 4-004(6)',
+        explanation:
+          'Ampacity is the maximum current a conductor can carry continuously without exceeding its insulation temperature rating. Choosing the right table is like choosing the right map — use the wrong one and you\'ll end up in trouble.\n\nHere\'s your cheat sheet for copper:\n- Table 1: Single conductor in FREE AIR (spacing ≥ 100% of cable diameter)\n- Table 2: 1, 2, or 3 conductors in RACEWAY (or 2/3-conductor cable) — the everyday table\n\nFor aluminum:\n- Table 3: Single conductor in FREE AIR\n- Table 4: 1, 2, or 3 conductors in RACEWAY\n\nCritical counting rules for which conductors to include when determining derating:\n- A NEUTRAL carrying only unbalanced current in a balanced circuit: DO NOT count (Rule 4-004(3))\n- A NEUTRAL in a 3-phase 4-wire system with single-phase loads on each phase: DO count — it carries comparable current (Rule 4-004(4))\n- A BONDING conductor: DO NOT count (Rule 4-004(6))\n- The allowable ampacity of NEUTRAL SUPPORTED cable: Tables 36A and 36B (Rule 4-004(5))',
+        fieldScenario:
+          'You\'re sizing conductors for a 200A 3-phase feeder in EMT conduit. The circuit has 3 phase conductors, 1 neutral, and 1 bonding conductor — 5 wires total in the raceway.\n\nStep 1: The bonding conductor doesn\'t count (Rule 4-004(6)).\nStep 2: Is the neutral carrying only unbalanced current? If the load is balanced (e.g., a 3-phase motor), the neutral doesn\'t count (Rule 4-004(3)) — you have 3 current-carrying conductors, use Table 2 directly.\nStep 3: But if it\'s feeding single-phase loads from each phase to neutral (like lighting), the neutral counts (Rule 4-004(4)) — you have 4 current-carrying conductors and must apply Table 5C derating factors.',
+        keyPoints: [
+          'Copper in free air: Table 1 (single conductor, spacing ≥ 100% diameter) (Rule 4-004(1)(a))',
+          'Copper in raceway (1-3 conductors): Table 2 — the most commonly used table (Rule 4-004(1)(b))',
+          'Copper in raceway (4+ conductors): Table 2 × Table 5C correction factors (Rule 4-004(1)(c))',
+          'Aluminum in free air: Table 3 (Rule 4-004(2)(a))',
+          'Aluminum in raceway: Table 4 (Rule 4-004(2)(b))',
+          'Neutral carrying unbalanced current only: DO NOT count (Rule 4-004(3))',
+          'Neutral carrying comparable current (single-phase loads on 3Φ 4-wire): DO count (Rule 4-004(4))',
+          'Bonding conductor: NEVER count (Rule 4-004(6))',
+          'Neutral supported cable: Tables 36A and 36B (Rule 4-004(5))',
+        ],
+      },
+      {
+        id: '4-correction',
+        title: 'Correction Factors & Special Conditions',
+        rules: 'Rules 4-004(7) to 4-004(25)',
+        explanation:
+          'Correction factors are the reality checks of conductor sizing. The ampacity tables assume ideal conditions (30°C ambient, proper spacing). When real-world conditions deviate, you must correct.\n\nThink of it like speed limits: the posted limit assumes dry roads and clear visibility. Rain (high ambient temp), fog (bundled cables), or construction (cable tray spacing) all require you to slow down.\n\nKey correction factor tables:\n- Table 5A: Ambient temperature > 30°C — heat from the environment\n- Table 5B: Single-conductor cables in free air at < 25% spacing — cables too close together\n- Table 5C: 4+ conductors bundled, or cables in non-ventilated trays — heat from neighbors\n- Table 5D: Single-conductor cables at 25%–100% spacing — moderate proximity\n\nImportant exemptions:\n- Auxiliary gutters with ≤ 30 conductors: NO correction needed (Rule 4-004(7)(a)(i))\n- Conductors inside equipment for termination: NO correction needed (Rule 4-004(7)(a)(ii))\n- Cable runs < 600 mm at close spacing: NO Table 5C correction (Rule 4-004(12))\n\nTransition rule (Rule 4-004(16)–(17)): When a cable goes underground to aboveground, use the LOWER ampacity — unless the lower portion is ≤ 10% of circuit length or ≤ 3 m (whichever is less).\n\nDifferent temperature ratings in same raceway (Rule 4-004(14)): Use the LOWEST rated conductor\'s temperature for sizing ALL conductors.',
+        fieldScenario:
+          'You\'re running 8 current-carrying conductors in a single conduit through a boiler room where ambient temperature reaches 45°C. You need TWO corrections:\n\n1. Table 5A: Ambient temp factor for 45°C (e.g., for 90°C rated RW90 wire, the factor is 0.87)\n2. Table 5C: 8 conductors means a factor of 0.7\n\nMultiply both: Start with Table 2 ampacity × 0.87 × 0.7 = your actual allowed ampacity. A No. 12 AWG RW90 copper at 30A (Table 2, 90°C column) becomes 30 × 0.87 × 0.7 = 18.3A.\n\nOn another job, you\'re pulling a short 400 mm jumper of cables grouped closely to enter a junction box. Rule 4-004(12) says that since the bundled run is less than 600 mm, you DON\'T need to apply Table 5C derating — this exemption saves you from oversizing a short transition.',
+        keyPoints: [
+          'Table 5A: ambient temperature > 30°C correction (Rule 4-004(7)(b)(i))',
+          'Table 5B: single-conductor cables in free air < 25% spacing (Rule 4-004(9))',
+          'Table 5C: 4+ conductors bundled / non-ventilated cable trays (Rule 4-004(7)(b)(iii))',
+          'Table 5D: cables at 25%–100% spacing in free air (Rule 4-004(8))',
+          'Auxiliary gutters ≤ 30 conductors: NO correction factors apply (Rule 4-004(7)(a)(i))',
+          'Conductors inside equipment for termination: NO correction (Rule 4-004(7)(a)(ii))',
+          'Cable runs < 600 mm at close spacing: Table 5C does NOT apply (Rule 4-004(12))',
+          'Multi-conductor cables touching > 600 mm: apply Table 5C for total conductor count (Rule 4-004(13))',
+          'Different temp ratings in same raceway: use the LOWEST rating (Rule 4-004(14))',
+          'Underground-to-aboveground transition: use lower ampacity, UNLESS ≤ 10% or ≤ 3 m (Rule 4-004(16)–(17))',
+          'Known load factor < 1.00: may increase underground ampacity (Rule 4-004(18)) — no further diversity permitted (Rule 4-004(19))',
+          'Cablebus in > 30°C ambient: apply Table 5A to nameplate ampacity (Rule 4-004(25))',
+        ],
+      },
+      {
+        id: '4-temperature',
+        title: 'Temperature Limitations at Terminations',
+        rules: 'Rule 4-006',
+        explanation:
+          'Even if your wire can handle 90°C, the equipment it connects to might melt at anything above 60°C. Rule 4-006 is about matching the conductor\'s capabilities to the weakest link — the TERMINATION point.\n\nThink of it like a water hose: the hose might handle 100 PSI, but the nozzle is rated for 60 PSI. You size for the nozzle, not the hose.\n\nThe two default termination temperatures when equipment is NOT marked:\n- ≤ 100A equipment OR ≤ No. 1 AWG conductors: assume 60°C\n- > 100A equipment OR > No. 1 AWG conductors: assume 75°C\n\nCritical detail: This rule only applies to the first 1.2 m of conductor from the termination (Rule 4-006(4)). Beyond 1.2 m, you can use the wire\'s full insulation rating.\n\nIf you need to make a cable transition to meet termination rules, the transitioning conductor must be at least 1.2 m long (Rule 4-006(5)).',
+        fieldScenario:
+          'You\'re connecting a 60A subpanel using RW90 copper conductors. The panel has no termination temperature marking. Since it\'s rated ≤ 100A, Rule 4-006(2)(a) says you must assume 60°C terminations.\n\nYou look up Table 2 in the 60°C column — a No. 6 AWG copper is rated for 65A at 60°C. That works for your 60A breaker.\n\nIf you had used the 90°C column (which shows 80A for No. 6), you might have been tempted to use No. 8 AWG (55A at 90°C but only 40A at 60°C). The termination temperature rule prevents this dangerous mistake.\n\nHowever, for a 200A service panel (> 100A), Rule 4-006(2)(b) allows you to use the 75°C column since the assumed termination temp is 75°C.',
+        keyPoints: [
+          'Equipment marked with termination temp: use that temp column in Tables 1–4 (Rule 4-006(1))',
+          '≤ 100A or ≤ No. 1 AWG, unmarked: assume 60°C termination (Rule 4-006(2)(a))',
+          '> 100A or > No. 1 AWG, unmarked: assume 75°C termination (Rule 4-006(2)(b))',
+          'High-voltage equipment unmarked: consult manufacturer (Rule 4-006(3))',
+          'Termination rule applies only to first 1.2 m from connection point (Rule 4-006(4))',
+          'Cable transition to meet termination rules: minimum 1.2 m length (Rule 4-006(5))',
+          'Underground tables (D8A–D11B, D17A–D17N, 12E): termination rules still apply (Rule 4-006(6))',
+        ],
+      },
+      {
+        id: '4-induced',
+        title: 'Induced Voltages, Flexible Cords & Equipment Wire',
+        rules: 'Rules 4-008, 4-010, 4-012, 4-014',
+        explanation:
+          'When large currents flow through a single conductor inside a steel (ferrous) enclosure, the alternating magnetic field induces eddy currents in the metal — heating it up like an induction cooktop. Rule 4-008 prevents this dangerous scenario.\n\nKey rules for high-current installations (> 200A):\n- Single conductors over 200A cannot enter ferrous metal boxes through INDIVIDUAL openings (Rule 4-008(3))\n- All conductors of a circuit must enter through ONE common non-ferrous or insulating plate, minimum 6 mm thick (Rule 4-008(6))\n- For mineral-insulated cables: group all current-carrying conductors together to minimize induced voltage on the sheath (Rule 4-008(7))\n\nFor cables with continuous metal sheaths (lead, aluminum, stainless steel, copper) where sheath currents cause overheating, three options:\n- Derate to 70% (Rule 4-008(1)(a))\n- Derate per manufacturer recommendations with deviation per Rule 2-030 (Rule 4-008(1)(b))\n- Install to prevent sheath current flow (Rule 4-008(1)(c))\n\nFlexible cords (Rule 4-012) use Table 12 for ampacity, with derating based on conductor count:\n- 2 or 3 conductors: 100% of Table 12\n- 4–6 conductors: 80%\n- 7–24 conductors: 70%\n- 25–42 conductors: 60%\n- 43+ conductors: 50%',
+        fieldScenario:
+          'You\'re installing a 400A single-phase service to a manufacturing facility. The cables terminate in a steel junction box. Rule 4-008(3) says you CANNOT bring each phase conductor through its own knockout — the single conductors carrying > 200A must NOT enter through individual openings.\n\nSolution: Use a common non-ferrous (aluminum) plate with a minimum thickness of 6 mm (Rule 4-008(6)), and bring ALL conductors through one opening. This ensures the magnetic fields cancel out instead of heating the steel box.\n\nIf you had run them through separate steel knockouts, the box could overheat, melt conductor insulation, and potentially start a fire.',
+        keyPoints: [
+          'Conductors > 200A: cannot enter ferrous boxes through individual openings (Rule 4-008(3))',
+          'All circuit conductors through ONE common non-ferrous/insulating plate, min 6 mm thick (Rule 4-008(6))',
+          'Metal sheath overheating: derate to 70%, follow manufacturer, or prevent sheath currents (Rule 4-008(1))',
+          'MI cables: group all current-carrying conductors together (Rule 4-008(7))',
+          'Flexible cord minimum: No. 18 AWG copper (Rule 4-010)',
+          'Tinsel cord exception: No. 27 AWG permitted (Rule 4-010(a))',
+          'Flexible cord ampacity: Table 12; 4–6 conductors = 80%, 7–24 = 70%, 25–42 = 60%, 43+ = 50% (Rule 4-012)',
+          'Equipment wire ampacity: Table 12 (Rule 4-014)',
+        ],
+      },
+      {
+        id: '4-neutral',
+        title: 'Neutral Conductor Rules',
+        rules: 'Rules 4-016, 4-018, 4-020',
+        explanation:
+          'The neutral is the return path for current in a circuit. Getting it wrong can cause overheating, voltage imbalances, or even fire.\n\nInsulation (Rule 4-016): Neutrals must be INSULATED (with a few exceptions in Sections 6 and 12). The insulation must have a temperature rating at least equal to the ungrounded conductors — you can\'t use a 60°C neutral with 90°C phase conductors.\n\nSizing (Rule 4-018): The neutral must carry the unbalanced load. The maximum unbalanced load = the maximum load between neutral and any one ungrounded conductor. Important nuances:\n- Electric-discharge lighting (fluorescent, HID): NO reduction in neutral size allowed\n- Non-linear loads on 3Φ 4-wire systems: NO reduction — triplen harmonics (3rd, 9th, 15th) add in the neutral\n- For other loads: 70% demand factor permitted on the unbalanced portion EXCEEDING 200A\n\nService neutral minimum: No. 10 AWG copper or No. 8 AWG aluminum — regardless of calculation.\n\nCommon neutral (Rule 4-020): One neutral may serve multiple feeder sets IF all conductors are in the same metal enclosure:\n- Up to 3 sets of 3-wire single-phase feeders, OR\n- Up to 2 sets of 4-wire three-phase feeders',
+        fieldScenario:
+          'You\'re designing a 600A service for a commercial building with mixed loads: 300A of fluorescent lighting and 300A of receptacle loads on a 3-phase 4-wire system.\n\nFor the lighting portion (300A): Rule 4-018(2)(a)(i) — electric-discharge lighting gets NO neutral reduction. You need the full 300A capacity.\n\nFor the receptacle portion (300A): The first 200A stays at 100%. The excess (300A - 200A = 100A) gets a 70% demand factor per Rule 4-018(2)(b): 100A × 0.70 = 70A.\n\nNeutral sizing: 300A (lighting) + 200A (first portion of receptacles) + 70A (demand-factored excess) = 570A minimum neutral capacity.',
+        keyPoints: [
+          'Neutrals must be insulated, with temp rating ≥ ungrounded conductors (Rule 4-016)',
+          'Neutral must carry the maximum unbalanced load (Rule 4-018(1))',
+          'Electric-discharge lighting: NO neutral size reduction (Rule 4-018(2)(a)(i))',
+          'Non-linear loads on 3Φ 4-wire: NO neutral size reduction (Rule 4-018(2)(a)(ii))',
+          '70% demand factor permitted on unbalanced load exceeding 200A (Rule 4-018(2)(b))',
+          'Service neutral minimum: No. 10 AWG copper or No. 8 AWG aluminum (Rule 4-018(3)(a))',
+          'Uninsulated neutral in raceway: treated as insulated with the LOWEST adjacent conductor temp rating (Rule 4-018(4))',
+          'Common neutral: up to 3 sets of 3-wire 1Φ feeders OR 2 sets of 4-wire 3Φ feeders — all in same enclosure (Rule 4-020)',
+        ],
+      },
+      {
+        id: '4-identification',
+        title: 'Conductor Identification & Color Coding',
+        rules: 'Rules 4-022, 4-024, 4-026, 4-028, 4-030, 4-032',
+        explanation:
+          'Color coding is the universal language of electrical wiring. Every conductor tells you what it is by its color — get it wrong and someone could die.\n\nNeutral identification (≤ No. 2 AWG): WHITE or 3 continuous white stripes (Rule 4-024)\nNeutral identification (> No. 2 AWG): Continuous white marking OR clearly marked/labeled at each end (Rule 4-026)\nMineral-insulated cable neutrals: Marked at each end during installation (Rule 4-028)\n\nGrounding/bonding: GREEN or green with yellow stripes — RESERVED exclusively, no other use (Rule 4-032(1)–(2))\n\nPhase color coding for 3-phase AC (Rule 4-032(3)(c)):\n- Phase A = RED\n- Phase B = BLACK\n- Phase C = BLUE\n- Neutral = WHITE\n\nSingle-phase (Rule 4-032(3)(b)): Black, Red, and White (for 3-wire)\n\n4-wire delta "high leg" (Rule 4-032(4)): Phase A (red) is the conductor with the higher voltage-to-ground — the "wild leg" at ~208V instead of 120V.\n\nMulti-wire branch circuits (Rule 4-030(4)): The neutral continuity must be INDEPENDENT of device connections. If you pigtail the neutral and connect devices with a separate wire, removing a receptacle won\'t break the neutral for the entire circuit.',
+        fieldScenario:
+          'You open a panel fed by a 4-wire delta system. Rule 4-032(4) identifies Phase A (red) as the high leg — it\'s 208V to ground instead of 120V. Rule 4-032(5) requires the panelboard to have a barriered compartment for single-phase connections, and the high-leg must be SEPARATED from that compartment.\n\nA new apprentice starts to connect a 120V receptacle circuit to the red Phase A bus bar. You stop him — connecting 120V loads to the high leg would apply 208V and destroy the equipment. The high leg is for 208V or 240V loads only.\n\nOn another job, you\'re pulling conductors from two different voltage systems into the same raceway. Rule 4-024(2) says one system uses plain white for its neutral; the second system\'s neutral must be white with an identifiable colored stripe (not green) to distinguish the two.',
+        keyPoints: [
+          'Neutral ≤ No. 2 AWG: white or 3 continuous white stripes (Rule 4-024(1))',
+          'Neutral > No. 2 AWG: continuous white OR labeled at each end (Rule 4-026)',
+          'Two systems in same raceway: one white neutral, other gets white with colored stripe — NOT green (Rule 4-024(2))',
+          'MI cable neutral: marked at each end during installation (Rule 4-028)',
+          'Multi-wire branch circuit: neutral continuity must be independent of device connections (Rule 4-030(4))',
+          'Grounding/bonding: GREEN or green/yellow — exclusively reserved (Rule 4-032(1)–(2))',
+          '3-phase AC: Red = A, Black = B, Blue = C, White = neutral (Rule 4-032(3)(c))',
+          '1-phase 3-wire: Black, Red, White (Rule 4-032(3)(b))',
+          '4-wire delta high leg: Phase A (red) has higher voltage-to-ground (Rule 4-032(4))',
+          'Delta panelboard: barriered compartment required; high leg separated (Rule 4-032(5))',
+          'Identified conductor not forming part of circuit: cut short or clearly indicate unused (Rule 4-030(3))',
+        ],
+      },
+    ],
+  },
 ]
