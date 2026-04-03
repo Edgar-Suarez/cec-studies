@@ -40,6 +40,30 @@ export interface WeaknessData {
   accuracy: number
 }
 
+export interface SketchNode {
+  id: string
+  x: number
+  y: number
+  w: number
+  h: number
+  label: string
+  color?: string
+  type?: 'rect' | 'ellipse' | 'diamond'
+}
+
+export interface SketchEdge {
+  from: string
+  to: string
+  label?: string
+}
+
+export interface SketchData {
+  nodes: SketchNode[]
+  edges: SketchEdge[]
+  width?: number
+  height?: number
+}
+
 export interface StudyGuideSubsection {
   id: string
   title: string
@@ -48,6 +72,7 @@ export interface StudyGuideSubsection {
   fieldScenario: string
   keyPoints: string[]
   diagramaMermaid: string
+  sketchData?: SketchData
 }
 
 export interface StudyGuideSection {

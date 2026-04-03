@@ -40,6 +40,34 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style H fill:#92400e,stroke:#f59e0b,color:#e2e8f0
     style K fill:#065f46,stroke:#10b981,color:#e2e8f0`,
+        sketchData: {
+          width: 700,
+          height: 380,
+          nodes: [
+            { id: 'permit', x: 20, y: 20, w: 140, h: 50, label: '1. Get PERMIT\n(Rule 2-004)', color: 'blue' },
+            { id: 'apply', x: 190, y: 20, w: 140, h: 50, label: '2. APPLICATION\n(Rule 2-006)', color: 'blue' },
+            { id: 'fees', x: 360, y: 20, w: 130, h: 50, label: '3. Pay FEES\n(Rule 2-008)', color: 'blue' },
+            { id: 'post', x: 520, y: 20, w: 150, h: 50, label: '4. POST permit\n(Rule 2-010)', color: 'green' },
+            { id: 'work', x: 20, y: 120, w: 140, h: 50, label: '5. DO THE WORK', color: 'purple' },
+            { id: 'notify', x: 190, y: 120, w: 160, h: 50, label: '6. NOTIFY inspector\nIN WRITING\n(Rule 2-012)', color: 'yellow' },
+            { id: 'inspect', x: 400, y: 120, w: 140, h: 60, label: 'Inspector\napproves?', color: 'yellow', type: 'diamond' },
+            { id: 'current', x: 250, y: 240, w: 200, h: 50, label: '7. CURRENT-PERMIT\n(Rule 2-016)', color: 'green' },
+            { id: 'energize', x: 250, y: 320, w: 200, h: 45, label: '8. Utility ENERGIZES', color: 'green', type: 'ellipse' },
+            { id: 'fix', x: 560, y: 120, w: 120, h: 50, label: 'Fix issues\n& re-notify', color: 'red' },
+          ],
+          edges: [
+            { from: 'permit', to: 'apply' },
+            { from: 'apply', to: 'fees' },
+            { from: 'fees', to: 'post' },
+            { from: 'post', to: 'work' },
+            { from: 'work', to: 'notify' },
+            { from: 'notify', to: 'inspect' },
+            { from: 'inspect', to: 'current', label: 'YES' },
+            { from: 'inspect', to: 'fix', label: 'NO' },
+            { from: 'fix', to: 'notify' },
+            { from: 'current', to: 'energize' },
+          ],
+        },
       },
       {
         id: '2-marking',
@@ -215,6 +243,27 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style E fill:#065f46,stroke:#10b981,color:#e2e8f0
     style J fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
+        sketchData: {
+          width: 680,
+          height: 320,
+          nodes: [
+            { id: 'title', x: 240, y: 10, w: 200, h: 40, label: 'SELECT ENCLOSURE', color: 'blue', type: 'ellipse' },
+            { id: 't1', x: 20, y: 100, w: 120, h: 55, label: 'TYPE 1\nIndoors\nOrdinary', color: 'blue' },
+            { id: 't2', x: 155, y: 100, w: 120, h: 55, label: 'TYPE 2\nIndoors\nCondensation', color: 'blue' },
+            { id: 't3r', x: 290, y: 100, w: 120, h: 55, label: 'TYPE 3R\nOutdoors\n(Most common)', color: 'green' },
+            { id: 't4', x: 425, y: 100, w: 120, h: 55, label: 'TYPE 4\nDirect water\nstreams', color: 'yellow' },
+            { id: 't5', x: 560, y: 100, w: 100, h: 55, label: 'TYPE 5\nDust/Lint\nFibres', color: 'purple' },
+            { id: 'rule', x: 180, y: 210, w: 320, h: 45, label: 'Can substitute HIGHER type\nNEVER lower (Rule 2-400-2)', color: 'red' },
+            { id: 'motors', x: 180, y: 270, w: 320, h: 40, label: 'Motors: DP=Drip-proof  WP=Weatherproof  TE=Enclosed', color: 'default' },
+          ],
+          edges: [
+            { from: 'title', to: 't1' },
+            { from: 'title', to: 't2' },
+            { from: 'title', to: 't3r' },
+            { from: 'title', to: 't4' },
+            { from: 'title', to: 't5' },
+          ],
+        },
       },
     ],
   },
@@ -289,6 +338,32 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style F fill:#065f46,stroke:#10b981,color:#e2e8f0
     style N fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
+        sketchData: {
+          width: 700,
+          height: 360,
+          nodes: [
+            { id: 'q', x: 260, y: 10, w: 180, h: 40, label: 'WHICH TABLE?', color: 'blue', type: 'ellipse' },
+            { id: 'cu', x: 80, y: 90, w: 140, h: 40, label: 'COPPER', color: 'blue' },
+            { id: 'al', x: 480, y: 90, w: 140, h: 40, label: 'ALUMINUM', color: 'purple' },
+            { id: 'cu-air', x: 10, y: 170, w: 130, h: 50, label: 'Free Air\nTABLE 1', color: 'green' },
+            { id: 'cu-rac', x: 160, y: 170, w: 130, h: 50, label: 'Raceway 1-3\nTABLE 2', color: 'green' },
+            { id: 'cu-4', x: 85, y: 250, w: 130, h: 50, label: '4+ conductors\nTbl 2 x Tbl 5C', color: 'yellow' },
+            { id: 'al-air', x: 410, y: 170, w: 130, h: 50, label: 'Free Air\nTABLE 3', color: 'green' },
+            { id: 'al-rac', x: 560, y: 170, w: 130, h: 50, label: 'Raceway 1-3\nTABLE 4', color: 'green' },
+            { id: 'al-4', x: 485, y: 250, w: 130, h: 50, label: '4+ conductors\nTbl 4 x Tbl 5C', color: 'yellow' },
+            { id: 'count', x: 220, y: 310, w: 260, h: 40, label: 'Neutral(unbal)=NO  Bond=NO  Neutral(load)=YES', color: 'red' },
+          ],
+          edges: [
+            { from: 'q', to: 'cu' },
+            { from: 'q', to: 'al' },
+            { from: 'cu', to: 'cu-air' },
+            { from: 'cu', to: 'cu-rac' },
+            { from: 'cu-rac', to: 'cu-4', label: '4+' },
+            { from: 'al', to: 'al-air' },
+            { from: 'al', to: 'al-rac' },
+            { from: 'al-rac', to: 'al-4', label: '4+' },
+          ],
+        },
       },
       {
         id: '4-correction',
@@ -472,6 +547,28 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style J fill:#065f46,stroke:#10b981,color:#e2e8f0
     style O fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
+        sketchData: {
+          width: 680,
+          height: 330,
+          nodes: [
+            { id: 'title', x: 230, y: 10, w: 220, h: 40, label: 'CEC COLOR CODE\n(Rule 4-032)', color: 'blue', type: 'ellipse' },
+            { id: 'a', x: 30, y: 90, w: 110, h: 45, label: 'Phase A\nRED', color: 'red' },
+            { id: 'b', x: 160, y: 90, w: 110, h: 45, label: 'Phase B\nBLACK', color: 'default' },
+            { id: 'c', x: 290, y: 90, w: 110, h: 45, label: 'Phase C\nBLUE', color: 'blue' },
+            { id: 'n', x: 420, y: 90, w: 110, h: 45, label: 'Neutral\nWHITE', color: 'default' },
+            { id: 'g', x: 550, y: 90, w: 110, h: 45, label: 'Ground\nGREEN', color: 'green' },
+            { id: 'small', x: 30, y: 180, w: 280, h: 45, label: 'Neutral <= #2 AWG: White or 3 white stripes\n(continuous identification)', color: 'default' },
+            { id: 'large', x: 370, y: 180, w: 280, h: 45, label: 'Neutral > #2 AWG: White OR labeled\nat each end (Rule 4-026)', color: 'default' },
+            { id: 'delta', x: 140, y: 270, w: 400, h: 45, label: '4-Wire Delta: Phase A (RED) = HIGH LEG ~208V\nKeep separated from single-phase compartment', color: 'red' },
+          ],
+          edges: [
+            { from: 'title', to: 'a' },
+            { from: 'title', to: 'b' },
+            { from: 'title', to: 'c' },
+            { from: 'title', to: 'n' },
+            { from: 'title', to: 'g' },
+          ],
+        },
       },
     ],
   },

@@ -5,8 +5,9 @@ import { studyGuideSections } from '../../data/studyGuide'
 import { questions, allSections } from '../../data/questions'
 import Link from 'next/link'
 import DiagramaExplicativo from '../../components/DiagramaExplicativo'
+import SketchRenderer from '../../components/SketchRenderer'
 
-type Tab = 'explanation' | 'scenario' | 'keypoints' | 'diagram'
+type Tab = 'explanation' | 'scenario' | 'keypoints' | 'diagram' | 'sketch'
 
 function SectionSelector({
   selectedSection,
@@ -70,12 +71,14 @@ function SubsectionCard({
   const [activeTab, setActiveTab] = useState<Tab>('explanation')
 
   const hasDiagram = subsection.diagramaMermaid?.trim().length > 0
+  const hasSketch = subsection.sketchData != null && subsection.sketchData.nodes.length > 0
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'explanation', label: 'Explanation' },
     { id: 'scenario', label: 'Field Scenario' },
     { id: 'keypoints', label: 'Key Points' },
     ...(hasDiagram ? [{ id: 'diagram' as Tab, label: 'Diagram' }] : []),
+    ...(hasSketch ? [{ id: 'sketch' as Tab, label: 'Sketch' }] : []),
   ]
 
   return (
@@ -171,6 +174,10 @@ function SubsectionCard({
 
         {activeTab === 'diagram' && hasDiagram && (
           <DiagramaExplicativo chart={subsection.diagramaMermaid} />
+        )}
+
+        {activeTab === 'sketch' && hasSketch && (
+          <SketchRenderer data={subsection.sketchData!} />
         )}
       </div>
     </div>
