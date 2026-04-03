@@ -47,6 +47,7 @@ export interface StudyGuideSubsection {
   explanation: string
   fieldScenario: string
   keyPoints: string[]
+  diagramaMermaid: string
 }
 
 export interface StudyGuideSection {

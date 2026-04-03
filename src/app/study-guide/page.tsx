@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { studyGuideSections } from '../../data/studyGuide'
 import { questions, allSections } from '../../data/questions'
 import Link from 'next/link'
+import DiagramaExplicativo from '../../components/DiagramaExplicativo'
 
-type Tab = 'explanation' | 'scenario' | 'keypoints'
+type Tab = 'explanation' | 'scenario' | 'keypoints' | 'diagram'
 
 function SectionSelector({
   selectedSection,
@@ -68,10 +69,13 @@ function SubsectionCard({
 }) {
   const [activeTab, setActiveTab] = useState<Tab>('explanation')
 
+  const hasDiagram = subsection.diagramaMermaid?.trim().length > 0
+
   const tabs: { id: Tab; label: string }[] = [
     { id: 'explanation', label: 'Explanation' },
     { id: 'scenario', label: 'Field Scenario' },
     { id: 'keypoints', label: 'Key Points' },
+    ...(hasDiagram ? [{ id: 'diagram' as Tab, label: 'Diagram' }] : []),
   ]
 
   return (
@@ -163,6 +167,10 @@ function SubsectionCard({
               ))}
             </ul>
           </div>
+        )}
+
+        {activeTab === 'diagram' && hasDiagram && (
+          <DiagramaExplicativo chart={subsection.diagramaMermaid} />
         )}
       </div>
     </div>

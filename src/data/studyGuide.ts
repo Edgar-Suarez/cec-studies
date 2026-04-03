@@ -25,6 +25,21 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Equipment exposed to water ingress must be EVALUATED before returning to service (Rule 2-032)',
           'Plans and specs in duplicate required for public buildings, large installations (Rule 2-014)',
         ],
+        diagramaMermaid: `graph TD
+    A["Start: Electrical Work Required"] --> B["1. Obtain PERMIT\\n(Rule 2-004)"]
+    B --> C["2. File APPLICATION\\n(Rule 2-006)"]
+    C --> D["3. Pay FEES\\n(Rule 2-008)"]
+    D --> E["4. POST permit on site\\n(Rule 2-010)"]
+    E --> F["5. Do the work"]
+    F --> G["6. NOTIFY inspector in writing\\n(Rule 2-012)"]
+    G --> H{"Inspector approves?"}
+    H -->|Yes| I["7. Get CURRENT-PERMIT\\n(Rule 2-016)"]
+    H -->|No| J["Fix deficiencies"]
+    J --> G
+    I --> K["8. Utility energizes service"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style H fill:#92400e,stroke:#f59e0b,color:#e2e8f0
+    style K fill:#065f46,stroke:#10b981,color:#e2e8f0`,
       },
       {
         id: '2-marking',
@@ -45,6 +60,21 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Rebuilt MCCBs or moulded case switches are NOT approved (Rule 2-106(4))',
           'AWG size references mean COPPER unless otherwise specified (Rule 2-120)',
         ],
+        diagramaMermaid: `graph TD
+    A["Equipment Marking\\n(Rule 2-100)"] --> B["Required Info"]
+    B --> B1["Manufacturer"]
+    B --> B2["Voltage / Amps"]
+    B --> B3["Phases / Hz"]
+    B --> B4["Approval Evidence"]
+    A --> C["Location-Specific Marks"]
+    C --> C1["SERVICE BOX\\nMax OCPD rating\\n(Rule 2-100-2)"]
+    C --> C2["DISTRIBUTION POINTS\\nWhat is protected +\\nMax OCPD\\n(Rule 2-100-3)"]
+    C --> C3["CAUTION LABEL\\nWhen continuous load\\n< breaker rating\\n(Rule 2-100-4)"]
+    A --> D["Rebuilt Equipment\\n(Rule 2-106)"]
+    D --> D1["New nameplate if\\nrating changed"]
+    D --> D2["Rebuilt MCCBs =\\nNOT APPROVED"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style D2 fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
       },
       {
         id: '2-installation',
@@ -68,6 +98,23 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Conductors in sunlight must be marked sunlight resistant (Rule 2-136)',
           'Class A GFCIs = supplementary shock protection ONLY, not a substitute for insulation or grounding (Rule 2-140)',
         ],
+        diagramaMermaid: `graph TD
+    A["Installation Safety\\nDecision Tree"] --> B{"Dwelling unit?"}
+    B -->|Yes| C["Max 150V to ground\\n(Rule 2-110)"]
+    B -->|No| D{"Service > 250 kVA +\\nqualified staff?"}
+    D -->|Yes| E["Up to 347V permitted\\nfor fixed equipment"]
+    D -->|No| C
+    A --> F{"Thermal insulation\\npresent?"}
+    F -->|Loose fill after wiring| G["Any wiring method OK\\nWatch for strain"]
+    F -->|Batt installed first| H["No special precaution"]
+    F -->|Metal-faced| I["25mm gap for K&T\\nNMD cable may touch"]
+    A --> J{"Penetrating fire\\nseparation?"}
+    J -->|Yes| K["SEAL per NBC\\n(Rule 2-128)"]
+    A --> L{"Direct sunlight?"}
+    L -->|Yes| M["Must be marked\\nsunlight resistant\\n(Rule 2-136)"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style K fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0
+    style M fill:#92400e,stroke:#f59e0b,color:#e2e8f0`,
       },
       {
         id: '2-protection',
@@ -82,6 +129,18 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Non-electrical components within 900mm of bare live parts serviced by unqualified persons = barriers required (Rule 2-202(2))',
           'Entrances to rooms with exposed live parts must have conspicuous WARNING SIGNS (Rule 2-202(3))',
         ],
+        diagramaMermaid: `graph TD
+    A["Bare Live Parts\\n(Rule 2-202)"] --> B{"Enclosed?"}
+    B -->|Yes| C["OK - Standard\\ninstallation"]
+    B -->|No| D{"In locked room/vault\\nfor qualified persons only?"}
+    D -->|Yes| E["OK with\\nWARNING SIGNS\\nat all entrances"]
+    D -->|No| F["VIOLATION -\\nMust enclose or\\nrestrict access"]
+    E --> G{"Non-electrical components\\nwithin 900mm?"}
+    G -->|Yes| H["BARRIERS required\\nover live parts\\n(Rule 2-202-2)"]
+    G -->|No| I["No additional\\nprotection needed"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style F fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0
+    style H fill:#92400e,stroke:#f59e0b,color:#e2e8f0`,
       },
       {
         id: '2-maintenance',
@@ -107,6 +166,20 @@ export const studyGuideSections: StudyGuideSection[] = [
           'All electrical equipment: kept in safe and proper working condition (Rule 2-300(1))',
           'Defective equipment: put in good order OR permanently disconnected (Rule 2-300(4))',
         ],
+        diagramaMermaid: `graph TD
+    A["Working Space\\nRequirements"] --> B["Min 1m clear\\nin front of equipment\\n(Rule 2-308-1)"]
+    B --> C{"Switchboard/MCC\\nwith bare live parts?"}
+    C -->|Yes| D["Headroom min 2.2m\\n(Rule 2-308-5)"]
+    C -->|No| E["Standard 1m\\nsufficient"]
+    D --> F{"Equipment rated\\n>= 1200A or > 750V?"}
+    F -->|Yes| G{"Dual egress\\npossible?"}
+    G -->|Yes| H["Exit without\\npassing equipment\\n(Rule 2-310-2)"]
+    G -->|No| I["Working space\\nincreases to 1.5m"]
+    F -->|No| J["Standard egress\\nrequirements"]
+    A --> K["Arc Flash Labels\\nRequired on:\\nSwitchboards, Panels,\\nMCCs, Meter Sockets\\n(NOT dwellings)\\n(Rule 2-306)"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style I fill:#92400e,stroke:#f59e0b,color:#e2e8f0
+    style K fill:#065f46,stroke:#10b981,color:#e2e8f0`,
       },
       {
         id: '2-enclosures',
@@ -127,6 +200,21 @@ export const studyGuideSections: StudyGuideSection[] = [
           'General-purpose enclosures do NOT need type designation marked (Rule 2-402(1))',
           'Motor abbreviations: DP = Drip-proof, WP = Weatherproof, TE = Totally Enclosed (Rule 2-404(1))',
         ],
+        diagramaMermaid: `graph TD
+    A["Select Enclosure Type"] --> B{"Location?"}
+    B -->|Indoors, ordinary| C["Type 1"]
+    B -->|Indoors, condensation| D["Type 2"]
+    B -->|Outdoors| E["Type 3R\\n(most common outdoor)"]
+    B -->|Direct water streams| F["Type 4"]
+    B -->|Dust, lint, fibres| G["Type 5"]
+    H["Substitution Rule\\n(Rule 2-400-2)"] --> I["Can ALWAYS use\\nHIGHER type"]
+    H --> J["NEVER use\\nLOWER type"]
+    K["Motor Markings"] --> L["DP = Drip-proof"]
+    K --> M["WP = Weatherproof"]
+    K --> N["TE = Totally Enclosed"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style E fill:#065f46,stroke:#10b981,color:#e2e8f0
+    style J fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
       },
     ],
   },
@@ -152,6 +240,19 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Flexible cord minimum: No. 18 AWG copper; tinsel cord may be No. 27 AWG (Rule 4-010)',
           'Cords for specific devices may be No. 20 AWG copper (Rule 4-010(b))',
         ],
+        diagramaMermaid: `graph TD
+    A["Minimum Conductor Sizes\\n(Rule 4-002)"] --> B{"Material?"}
+    B -->|Copper| C["Min No. 14 AWG"]
+    B -->|Aluminum| D["Min No. 12 AWG"]
+    A --> E["Exceptions"]
+    E --> F["Flexible Cord\\nMin No. 18 AWG"]
+    E --> G["Equipment Wire\\n(smaller OK)"]
+    E --> H["Control Circuits\\n(smaller OK)"]
+    F --> I["Tinsel Cord\\nNo. 27 AWG"]
+    F --> J["Specific Devices\\nNo. 20 AWG"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style C fill:#065f46,stroke:#10b981,color:#e2e8f0
+    style D fill:#065f46,stroke:#10b981,color:#e2e8f0`,
       },
       {
         id: '4-ampacity',
@@ -172,6 +273,22 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Bonding conductor: NEVER count (Rule 4-004(6))',
           'Neutral supported cable: Tables 36A and 36B (Rule 4-004(5))',
         ],
+        diagramaMermaid: `graph TD
+    A["Which Ampacity Table?"] --> B{"Conductor Material?"}
+    B -->|Copper| C{"Installation?"}
+    B -->|Aluminum| D{"Installation?"}
+    C -->|Free Air| E["TABLE 1"]
+    C -->|Raceway 1-3 cond.| F["TABLE 2\\n(most common)"]
+    C -->|Raceway 4+ cond.| G["TABLE 2 x TABLE 5C"]
+    D -->|Free Air| H["TABLE 3"]
+    D -->|Raceway 1-3 cond.| I["TABLE 4"]
+    D -->|Raceway 4+ cond.| J["TABLE 4 x TABLE 5C"]
+    K["Count These Conductors?"] --> L["Neutral unbalanced only\\nDO NOT count"]
+    K --> M["Neutral with single-phase loads\\nDO count"]
+    K --> N["Bonding conductor\\nNEVER count"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style F fill:#065f46,stroke:#10b981,color:#e2e8f0
+    style N fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
       },
       {
         id: '4-correction',
@@ -195,6 +312,24 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Known load factor < 1.00: may increase underground ampacity (Rule 4-004(18)) — no further diversity permitted (Rule 4-004(19))',
           'Cablebus in > 30°C ambient: apply Table 5A to nameplate ampacity (Rule 4-004(25))',
         ],
+        diagramaMermaid: `graph TD
+    A["Correction Factor\\nDecision Tree"] --> B{"Ambient temp\\n> 30C?"}
+    B -->|Yes| C["Apply TABLE 5A"]
+    B -->|No| D["No temp correction"]
+    A --> E{"How many conductors\\nin raceway?"}
+    E -->|1-3| F["No bundling\\ncorrection"]
+    E -->|4+| G["Apply TABLE 5C"]
+    A --> H{"Cable spacing\\nin free air?"}
+    H -->|">= 100%"| I["No correction\\n(Tables 1/3 direct)"]
+    H -->|"25% - 100%"| J["Apply TABLE 5D"]
+    H -->|"< 25%"| K["Apply TABLE 5B\\n(up to 4 cables)"]
+    A --> L["EXEMPTIONS"]
+    L --> M["Aux gutters <= 30 cond."]
+    L --> N["Inside equipment"]
+    L --> O["Bundled run < 600mm"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style C fill:#92400e,stroke:#f59e0b,color:#e2e8f0
+    style G fill:#92400e,stroke:#f59e0b,color:#e2e8f0`,
       },
       {
         id: '4-temperature',
@@ -213,6 +348,19 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Cable transition to meet termination rules: minimum 1.2 m length (Rule 4-006(5))',
           'Underground tables (D8A–D11B, D17A–D17N, 12E): termination rules still apply (Rule 4-006(6))',
         ],
+        diagramaMermaid: `graph TD
+    A["Temperature Limitation\\nat Terminations\\n(Rule 4-006)"] --> B{"Equipment marked\\nwith temp?"}
+    B -->|Yes| C["Use MARKED\\ntemp column"]
+    B -->|No| D{"Equipment rated\\n> 100A?"}
+    D -->|No| E["Assume 60C\\n(Rule 4-006-2a)"]
+    D -->|Yes| F["Assume 75C\\n(Rule 4-006-2b)"]
+    E --> G["Use 60C column\\nin Tables 1-4"]
+    F --> H["Use 75C column\\nin Tables 1-4"]
+    A --> I["Applies only to\\nfirst 1.2m from\\ntermination point\\n(Rule 4-006-4)"]
+    I --> J["Beyond 1.2m:\\nuse full insulation\\ntemp rating"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style E fill:#92400e,stroke:#f59e0b,color:#e2e8f0
+    style F fill:#065f46,stroke:#10b981,color:#e2e8f0`,
       },
       {
         id: '4-induced',
@@ -232,6 +380,22 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Flexible cord ampacity: Table 12; 4–6 conductors = 80%, 7–24 = 70%, 25–42 = 60%, 43+ = 50% (Rule 4-012)',
           'Equipment wire ampacity: Table 12 (Rule 4-014)',
         ],
+        diagramaMermaid: `graph TD
+    A["Conductors > 200A\\nEntering Ferrous Box\\n(Rule 4-008)"] --> B{"Individual\\nopenings?"}
+    B -->|Yes| C["VIOLATION\\nRule 4-008-3"]
+    B -->|No| D["All conductors through\\nONE common plate"]
+    D --> E["Non-ferrous or\\ninsulating plate\\nmin 6mm thick\\n(Rule 4-008-6)"]
+    F["Metal Sheath\\nOverheating?"] --> G["Option 1:\\nDerate to 70%"]
+    F --> H["Option 2:\\nManufacturer specs"]
+    F --> I["Option 3:\\nPrevent sheath\\ncurrent flow"]
+    J["Flexible Cord Derating\\n(Table 12)"] --> K["2-3 cond: 100%"]
+    J --> L["4-6 cond: 80%"]
+    J --> M["7-24 cond: 70%"]
+    J --> N["25-42 cond: 60%"]
+    J --> O["43+ cond: 50%"]
+    style C fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style E fill:#065f46,stroke:#10b981,color:#e2e8f0`,
       },
       {
         id: '4-neutral',
@@ -251,6 +415,23 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Uninsulated neutral in raceway: treated as insulated with the LOWEST adjacent conductor temp rating (Rule 4-018(4))',
           'Common neutral: up to 3 sets of 3-wire 1Φ feeders OR 2 sets of 4-wire 3Φ feeders — all in same enclosure (Rule 4-020)',
         ],
+        diagramaMermaid: `graph TD
+    A["Neutral Sizing\\n(Rule 4-018)"] --> B["Calculate max\\nunbalanced load"]
+    B --> C{"Load type?"}
+    C -->|"Electric-discharge\\nlighting"| D["NO reduction\\n100% of load\\n(Rule 4-018-2a-i)"]
+    C -->|"Non-linear loads\\n3P 4-wire"| E["NO reduction\\n100% of load\\n(Rule 4-018-2a-ii)"]
+    C -->|"Other loads"| F{"Exceeds 200A?"}
+    F -->|"First 200A"| G["100% capacity"]
+    F -->|"Excess over 200A"| H["70% demand factor\\n(Rule 4-018-2b)"]
+    G --> I["Add all portions\\n= Neutral size"]
+    H --> I
+    D --> I
+    E --> I
+    I --> J["Min service neutral:\\nNo. 10 Cu / No. 8 Al\\n(Rule 4-018-3a)"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style D fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0
+    style E fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0
+    style H fill:#92400e,stroke:#f59e0b,color:#e2e8f0`,
       },
       {
         id: '4-identification',
@@ -273,6 +454,24 @@ export const studyGuideSections: StudyGuideSection[] = [
           'Delta panelboard: barriered compartment required; high leg separated (Rule 4-032(5))',
           'Identified conductor not forming part of circuit: cut short or clearly indicate unused (Rule 4-030(3))',
         ],
+        diagramaMermaid: `graph TD
+    A["CEC Color Code\\n(Rule 4-032)"] --> B["3-Phase AC"]
+    B --> C["Phase A = RED"]
+    B --> D["Phase B = BLACK"]
+    B --> E["Phase C = BLUE"]
+    B --> F["Neutral = WHITE"]
+    A --> G["1-Phase 3-Wire"]
+    G --> H["BLACK + RED + WHITE"]
+    A --> I["Grounding/Bonding"]
+    I --> J["GREEN or\\nGreen/Yellow\\n(RESERVED)"]
+    A --> K["Neutral ID by Size"]
+    K --> L["<= No. 2 AWG:\\nWhite or 3 white stripes\\n(Rule 4-024)"]
+    K --> M["> No. 2 AWG:\\nWhite or labeled\\nat each end\\n(Rule 4-026)"]
+    A --> N["4-Wire Delta"]
+    N --> O["Phase A RED =\\nHigh Leg 208V\\n(Rule 4-032-4)"]
+    style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
+    style J fill:#065f46,stroke:#10b981,color:#e2e8f0
+    style O fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
       },
     ],
   },
