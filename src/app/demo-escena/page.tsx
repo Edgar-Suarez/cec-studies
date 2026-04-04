@@ -7,6 +7,9 @@ import SketchBubble from '../../shared/components/SketchBubble'
 import SketchBox from '../../shared/components/SketchBox'
 import { FileText, DollarSign, ClipboardCheck, Eye, Zap, X } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import SketchCharacter from '../../shared/components/sketches/SketchCharacter'
+import SketchArrow from '../../shared/components/sketches/SketchArrow'
+import SketchIcon from '../../shared/components/sketches/SketchIcon'
 
 // --- Data ---
 
@@ -130,36 +133,8 @@ const ampacityTables: TableData[] = [
 
 // --- Components ---
 
-function CentralIcon() {
-  return (
-    <div className="flex items-center justify-center">
-      <svg
-        width="100"
-        height="100"
-        viewBox="0 0 100 100"
-        fill="none"
-        stroke="#c4a882"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="opacity-60"
-      >
-        <rect x="20" y="10" width="60" height="80" rx="4" />
-        <path d="M35 28h30M35 38h30M35 48h20" />
-        <circle cx="65" cy="70" r="12" strokeDasharray="4 3" />
-        <path d="M61 70l3 3 6-7" />
-        <path d="M30 10v-6h10M60 4h10v6" />
-      </svg>
-    </div>
-  )
-}
-
-function StepIcon({ icon: Icon, color }: { icon: LucideIcon; color: string }) {
-  return (
-    <span className="inline-flex items-center justify-center w-8 h-8" style={{ color }}>
-      <Icon size={18} strokeWidth={1.5} />
-    </span>
-  )
+function StepIcon({ icon, color }: { icon: LucideIcon; color: string }) {
+  return <SketchIcon icon={icon} color={color} size={32} />
 }
 
 function DetailModal({
@@ -338,14 +313,24 @@ export default function DemoEscenaPage() {
             ))}
           </div>
 
-          <div className="flex flex-col items-center gap-4 pt-4">
-            <CentralIcon />
+          <div className="flex flex-col items-center gap-3 pt-2">
+            <SketchCharacter posture="working" color="#0ea5e9" size={80} />
+            <SketchArrow
+              from={{ x: 40, y: 5 }}
+              to={{ x: 40, y: 35 }}
+              curve={-15}
+              color="#c4a882"
+              width={80}
+              height={40}
+            />
+            <SketchIcon icon={FileText} color="#c4a882" size={48} />
             <SketchBox type="highlight" color="#fbbf2480" padding={4}>
               <span className="text-lg font-bold text-slate-700">Your Permit</span>
             </SketchBox>
             <p className="text-sm text-slate-500 text-center leading-snug">
               Click any step to see<br />the full CEC rule
             </p>
+            <SketchCharacter posture="celebrating" color="#059669" size={70} className="mt-2" />
           </div>
 
           <div className="flex flex-col gap-4">
@@ -355,7 +340,14 @@ export default function DemoEscenaPage() {
           </div>
         </div>
 
-        <div className="mt-8 flex justify-center">
+        {/* Connecting arrows between left steps */}
+        <div className="flex justify-between px-8 -mt-2">
+          <SketchArrow from={{ x: 10, y: 5 }} to={{ x: 70, y: 5 }} curve={-12} color="#94a3b8" width={80} height={20} />
+          <SketchArrow from={{ x: 10, y: 5 }} to={{ x: 70, y: 5 }} curve={-12} color="#94a3b8" width={80} height={20} />
+        </div>
+
+        <div className="mt-6 flex items-center justify-center gap-4">
+          <SketchCharacter posture="pointing" color="#0ea5e9" size={60} />
           <SketchBox type="underline" color="#0ea5e9" strokeWidth={3} padding={2}>
             <span className="text-xl font-bold text-slate-700">
               No permit = No work. Always.
@@ -366,13 +358,21 @@ export default function DemoEscenaPage() {
 
       {/* === SCENE 2: Ampacity Tables === */}
       <SketchScene title="AMPACITY AT A GLANCE" titleColor="#10b981" className="rounded-2xl">
-        <div className="flex flex-wrap justify-center gap-6">
-          {ampacityTables.map((table) => (
-            <InteractiveTable key={table.id} table={table} />
-          ))}
+        <div className="flex items-start gap-4 justify-center">
+          <SketchCharacter posture="thinking" color="#10b981" size={75} className="mt-4 flex-shrink-0" />
+          <div className="flex flex-wrap justify-center gap-6">
+            {ampacityTables.map((table) => (
+              <InteractiveTable key={table.id} table={table} />
+            ))}
+          </div>
         </div>
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-4 flex justify-center">
+          <SketchArrow from={{ x: 20, y: 25 }} to={{ x: 180, y: 25 }} curve={-20} color="#10b981" width={200} height={35} />
+        </div>
+
+        <div className="mt-2 flex items-center justify-center gap-3">
+          <SketchCharacter posture="pointing" color="#ef4444" size={55} />
           <SketchBox type="highlight" color="rgba(239,68,68,0.2)" padding={4}>
             <span className="text-base text-slate-700">
               4+ conductors in raceway? Multiply by <strong>Table 5C</strong> correction factor
