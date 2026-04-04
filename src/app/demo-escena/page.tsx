@@ -8,6 +8,7 @@ import SketchBox from '../../shared/components/SketchBox'
 import SketchCharacter from '../../shared/components/sketches/SketchCharacter'
 import SketchPath from '../../shared/components/sketches/SketchPath'
 import SketchIcon from '../../shared/components/sketches/SketchIcon'
+import SketchBlob from '../../shared/components/sketches/SketchBlob'
 import { FileText, DollarSign, ClipboardCheck, Eye, Zap, X, Clock, RotateCcw } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -31,37 +32,43 @@ const permitSteps: StepData[] = [
   { id: 'energize', icon: Zap, title: 'Energize!', shortDesc: 'Go live', detail: 'Current-permit authorizes connection to electrical energy. The final green light from the inspection department.', rule: 'Rule 2-016' },
 ]
 
-// Positions along the S-curve for each step (percentage-based for responsive feel)
-const stepPositions = [
-  { top: 100, left: 60 },
-  { top: 80, left: 220 },
-  { top: 160, left: 340 },
-  { top: 240, left: 180 },
-  { top: 220, left: 420 },
-  { top: 310, left: 530 },
+// Blob positions scattered organically along the S-curve
+const blobLayout = [
+  { top: 70, left: 70, w: 110, h: 70, rot: -3 },
+  { top: 50, left: 240, w: 100, h: 65, rot: 2 },
+  { top: 150, left: 370, w: 105, h: 70, rot: -2 },
+  { top: 260, left: 200, w: 110, h: 65, rot: 3 },
+  { top: 245, left: 440, w: 105, h: 70, rot: -1 },
+  { top: 340, left: 560, w: 115, h: 75, rot: 2 },
 ]
 
-// Path waypoints for the S-curve connecting all steps
-const pathPoints = [
-  { x: 90, y: 130 },
-  { x: 200, y: 100 },
-  { x: 310, y: 110 },
-  { x: 380, y: 180 },
-  { x: 260, y: 260 },
-  { x: 380, y: 250 },
-  { x: 480, y: 280 },
-  { x: 570, y: 340 },
+// Character positions along the flow
+const characters: { posture: 'pointing' | 'working' | 'thinking' | 'celebrating' | 'standing'; top: number; left: number; size: number; color: string; delay: number }[] = [
+  { posture: 'pointing', top: 100, left: 0, size: 75, color: '#333', delay: 0.1 },
+  { posture: 'working', top: 30, left: 170, size: 55, color: '#d4856a', delay: 0.4 },
+  { posture: 'thinking', top: 190, left: 290, size: 60, color: '#64748b', delay: 0.7 },
+  { posture: 'standing', top: 285, left: 370, size: 55, color: '#333', delay: 1.0 },
+  { posture: 'celebrating', top: 320, left: 660, size: 70, color: '#059669', delay: 1.3 },
+]
+
+// The organic S-curve path — flows behind/under the blobs
+const flowPath = [
+  { x: 50, y: 140 },
+  { x: 120, y: 105 },
+  { x: 220, y: 80 },
+  { x: 310, y: 95 },
+  { x: 400, y: 160 },
+  { x: 350, y: 240 },
+  { x: 260, y: 285 },
+  { x: 360, y: 300 },
+  { x: 490, y: 280 },
+  { x: 580, y: 330 },
+  { x: 640, y: 370 },
 ]
 
 // --- Detail Modal ---
 
-function DetailModal({
-  data,
-  onClose,
-}: {
-  data: StepData
-  onClose: () => void
-}) {
+function DetailModal({ data, onClose }: { data: StepData; onClose: () => void }) {
   return (
     <AnimatePresence>
       <motion.div
@@ -79,10 +86,7 @@ function DetailModal({
           transition={{ type: 'spring', damping: 22, stiffness: 280 }}
         >
           <SketchBubble color="#333" tail="none">
-            <button
-              onClick={onClose}
-              className="absolute top-2 right-2 z-20 text-slate-400 hover:text-slate-700"
-            >
+            <button onClick={onClose} className="absolute top-2 right-2 z-20 text-slate-400 hover:text-slate-700">
               <X size={16} />
             </button>
             <div className="flex items-start gap-3">
@@ -102,40 +106,35 @@ function DetailModal({
   )
 }
 
-// --- Floating Step Bubble ---
+// --- Floating organic blob step ---
 
-function FloatingStep({
+function FloatingBlob({
   step,
   index,
-  style,
+  layout,
 }: {
   step: StepData
   index: number
-  style: React.CSSProperties
+  layout: typeof blobLayout[0]
 }) {
   const [showModal, setShowModal] = useState(false)
 
   return (
     <>
       <motion.div
-        className="absolute cursor-pointer"
-        style={style}
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 * index, duration: 0.4 }}
-        whileHover={{ scale: 1.08, rotate: Math.random() > 0.5 ? 2 : -2 }}
-        whileTap={{ scale: 0.94 }}
+        className="absolute cursor-pointer z-10"
+        style={{ top: layout.top, left: layout.left }}
+        initial={{ opacity: 0, scale: 0.7 }}
+        animate={{ opacity: 1, scale: 1, rotate: layout.rot }}
+        transition={{ delay: 0.2 * index, duration: 0.5, type: 'spring', stiffness: 200 }}
+        whileHover={{ scale: 1.1, rotate: 0 }}
+        whileTap={{ scale: 0.92 }}
         onClick={() => setShowModal(true)}
       >
-        <SketchBubble color="#333" tail="none">
-          <div className="flex items-center gap-2">
-            <SketchIcon icon={step.icon} color="#d4856a" size={24} />
-            <div>
-              <div className="text-sm font-bold text-slate-800">{index + 1}. {step.title}</div>
-              <div className="text-xs text-slate-500">{step.shortDesc}</div>
-            </div>
-          </div>
-        </SketchBubble>
+        <SketchBlob color="#333" width={layout.w} height={layout.h}>
+          <div className="text-sm font-bold leading-tight">{index + 1}. {step.title}</div>
+          <div className="text-xs text-slate-500 mt-0.5">{step.shortDesc}</div>
+        </SketchBlob>
       </motion.div>
       {showModal && <DetailModal data={step} onClose={() => setShowModal(false)} />}
     </>
@@ -154,94 +153,85 @@ export default function DemoEscenaPage() {
         </p>
       </div>
 
-      {/* === SCENE 1: Reference-style — "EL PROBLEMA" === */}
+      {/* === SCENE 1: "EL PROBLEMA" — reference replica === */}
       <SketchScene title="EL PROBLEMA" titleColor="#1e293b" className="rounded-2xl mb-8">
         <div className="relative" style={{ height: 320 }}>
-          {/* Stickman — left side, thinking */}
+          {/* Stickman thinking */}
           <div className="absolute" style={{ top: 40, left: 10 }}>
             <SketchCharacter posture="thinking" color="#333" size={100} />
           </div>
 
-          {/* Floating speech bubbles around character */}
-          <motion.div className="absolute" style={{ top: 0, left: 120 }}
+          {/* Floating speech blobs around character */}
+          <motion.div className="absolute" style={{ top: 0, left: 115 }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-            <SketchBubble color="#333" tail="left">
+            <SketchBlob color="#333" width={140} height={50}>
               <span className="text-sm font-bold">Hazlo en formato tabla</span>
-            </SketchBubble>
+            </SketchBlob>
           </motion.div>
 
-          <motion.div className="absolute" style={{ top: 60, left: 180 }}
+          <motion.div className="absolute" style={{ top: 55, left: 210 }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
-            <SketchBubble color="#333" tail="left">
+            <SketchBlob color="#333" width={110} height={45}>
               <span className="text-sm font-bold">Usa este tono</span>
-            </SketchBubble>
+            </SketchBlob>
           </motion.div>
 
-          <motion.div className="absolute" style={{ top: 120, left: 110 }}
+          <motion.div className="absolute" style={{ top: 115, left: 140 }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
-            <SketchBubble color="#333" tail="left">
+            <SketchBlob color="#333" width={130} height={45}>
               <span className="text-xs">Siempre en español</span>
-            </SketchBubble>
+            </SketchBlob>
           </motion.div>
 
-          <motion.div className="absolute" style={{ top: 190, left: 20 }}
+          <motion.div className="absolute" style={{ top: 185, left: 15 }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}>
-            <SketchBubble color="#333" tail="top">
+            <SketchBlob color="#333" width={120} height={45}>
               <span className="text-xs">No olvides el logo</span>
-            </SketchBubble>
+            </SketchBlob>
           </motion.div>
 
-          <motion.div className="absolute" style={{ top: 190, left: 160 }}
+          <motion.div className="absolute" style={{ top: 180, left: 165 }}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-            <SketchBubble color="#333" tail="top">
+            <SketchBlob color="#333" width={120} height={45}>
               <span className="text-xs">Sigue estos pasos</span>
-            </SketchBubble>
+            </SketchBlob>
           </motion.div>
 
-          {/* Coral arrows from bubbles toward clock */}
-          <div className="absolute" style={{ top: 100, left: 310 }}>
+          {/* Coral S-curve from bubbles to clock */}
+          <div className="absolute" style={{ top: 70, left: 300 }}>
             <SketchPath
               points={[
-                { x: 10, y: 40 },
-                { x: 50, y: 20 },
-                { x: 90, y: 50 },
-                { x: 130, y: 30 },
+                { x: 15, y: 60 },
+                { x: 50, y: 30 },
+                { x: 90, y: 65 },
+                { x: 130, y: 35 },
               ]}
               color="#d4856a"
-              strokeWidth={3}
+              strokeWidth={3.5}
               width={140}
-              height={70}
+              height={80}
             />
           </div>
 
-          {/* Clock — central object */}
-          <div className="absolute flex flex-col items-center" style={{ top: 60, left: 430 }}>
+          {/* Clock */}
+          <div className="absolute flex flex-col items-center" style={{ top: 55, left: 430 }}>
             <SketchIcon icon={Clock} color="#d4856a" fillColor="rgba(212,133,106,0.1)" size={80} />
-            <span
-              className="text-base font-black uppercase mt-1 tracking-wide"
-              style={{ fontFamily: "'Arial Black', sans-serif", color: '#333' }}
-            >
+            <span className="text-base font-black uppercase mt-1 tracking-wide"
+              style={{ fontFamily: "'Arial Black', sans-serif", color: '#333' }}>
               Tiempo Perdido
             </span>
           </div>
 
-          {/* Arrow from clock to text */}
-          <div className="absolute" style={{ top: 50, left: 560 }}>
+          {/* Arrow clock → text */}
+          <div className="absolute" style={{ top: 45, left: 555 }}>
             <SketchPath
-              points={[
-                { x: 10, y: 60 },
-                { x: 40, y: 30 },
-                { x: 70, y: 50 },
-              ]}
-              color="#d4856a"
-              strokeWidth={3}
-              width={80}
-              height={70}
+              points={[{ x: 10, y: 55 }, { x: 40, y: 25 }, { x: 65, y: 45 }]}
+              color="#d4856a" strokeWidth={3.5} width={75} height={65}
             />
           </div>
 
           {/* Right side text */}
-          <motion.div className="absolute font-hand" style={{ top: 20, left: 620 }}
+          <motion.div className="absolute font-hand" style={{ top: 20, left: 615 }}
             initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
             <div className="text-xl text-slate-800 leading-snug">
               Cada vez<br />que abres<br />el chat...<br />
@@ -251,7 +241,7 @@ export default function DemoEscenaPage() {
             </div>
           </motion.div>
 
-          {/* Recycle icon — bottom right */}
+          {/* Recycle icon */}
           <div className="absolute" style={{ bottom: 10, right: 20 }}>
             <SketchIcon icon={RotateCcw} color="#6b8e6b" fillColor="rgba(107,142,107,0.08)" size={50} />
           </div>
@@ -265,56 +255,45 @@ export default function DemoEscenaPage() {
         </div>
       </SketchScene>
 
-      {/* === SCENE 2: Permit Steps — organic flow === */}
+      {/* === SCENE 2: Permit Steps — organic blob flow === */}
       <SketchScene title="PERMIT STEPS" titleColor="#1e293b" className="rounded-2xl mt-8">
-        <div className="relative" style={{ height: 420 }}>
-          {/* The S-curve path connecting all steps */}
-          <div className="absolute inset-0">
+        <div className="relative" style={{ height: 450 }}>
+          {/* S-curve path — rendered FIRST so it sits behind blobs */}
+          <div className="absolute inset-0 z-0">
             <SketchPath
-              points={pathPoints}
+              points={flowPath}
               color="#d4856a"
-              strokeWidth={2.5}
-              width={700}
-              height={400}
+              strokeWidth={3}
+              width={720}
+              height={420}
               showArrow
             />
           </div>
 
-          {/* Character in the middle of the flow, pointing along the path */}
-          <motion.div
-            className="absolute z-10"
-            style={{ top: 155, left: 60 }}
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-          >
-            <SketchCharacter posture="pointing" color="#333" size={90} />
-          </motion.div>
-
-          {/* Floating step bubbles scattered along the curve */}
-          {permitSteps.map((step, i) => (
-            <FloatingStep
-              key={step.id}
-              step={step}
-              index={i}
-              style={{ top: stepPositions[i].top, left: stepPositions[i].left }}
-            />
+          {/* Characters scattered along the flow */}
+          {characters.map((c, i) => (
+            <motion.div
+              key={i}
+              className="absolute z-5"
+              style={{ top: c.top, left: c.left }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: c.delay }}
+            >
+              <SketchCharacter posture={c.posture} color={c.color} size={c.size} />
+            </motion.div>
           ))}
 
-          {/* Bottom: celebrating character at the end of the path */}
-          <motion.div
-            className="absolute z-10"
-            style={{ top: 330, left: 620 }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.2 }}
-          >
-            <SketchCharacter posture="celebrating" color="#059669" size={70} />
-          </motion.div>
+          {/* Organic blob steps — floating along the curve */}
+          {permitSteps.map((step, i) => (
+            <FloatingBlob key={step.id} step={step} index={i} layout={blobLayout[i]} />
+          ))}
 
           {/* Final annotation */}
           <motion.div
-            className="absolute z-10"
-            style={{ bottom: 10, left: 180 }}
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }}
+            className="absolute z-20"
+            style={{ bottom: 5, left: 140 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}
           >
             <SketchBox type="underline" color="#d4856a" strokeWidth={3} padding={2}>
               <span className="text-lg font-bold text-slate-700 font-hand">
