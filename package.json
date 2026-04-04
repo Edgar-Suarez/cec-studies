@@ -16,6 +16,7 @@
     "next": "^16.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "rough-notation": "^0.5.1",
     "roughjs": "^4.6.6"
   },
   "devDependencies": {

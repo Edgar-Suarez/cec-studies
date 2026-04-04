@@ -6,7 +6,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      // Personaliza aquí tu tema
+      fontFamily: {
+        hand: ['Caveat', 'cursive'],
+      },
     },
   },
   plugins: [],
