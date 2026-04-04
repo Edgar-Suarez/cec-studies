@@ -1,14 +1,16 @@
 'use client'
 
+import { useEffect, useRef } from 'react'
 import type { InfoCard } from '../lib/types'
 import type { ReactNode } from 'react'
+import rough from 'roughjs'
 
 const ICONS: Record<string, ReactNode> = {
   permit: (
     <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <rect x="6" y="4" width="20" height="24" rx="3" />
       <path d="M11 10h10M11 14h10M11 18h6" />
-      <circle cx="22" cy="22" r="4" fill="currentColor" opacity="0.15" />
+      <circle cx="22" cy="22" r="4" fill="none" />
       <path d="M20.5 22l1 1 2-2" />
     </svg>
   ),
@@ -66,7 +68,7 @@ const ICONS: Record<string, ReactNode> = {
     <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <rect x="7" y="14" width="18" height="14" rx="3" />
       <path d="M11 14V10a5 5 0 0110 0v4" />
-      <circle cx="16" cy="21" r="2" />
+      <circle cx="16" cy="21" r="2" fill="none" />
     </svg>
   ),
   ruler: (
@@ -84,17 +86,17 @@ const ICONS: Record<string, ReactNode> = {
   wire: (
     <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 16h6" />
-      <circle cx="14" cy="16" r="4" />
+      <circle cx="14" cy="16" r="4" fill="none" />
       <path d="M18 16h6" />
-      <circle cx="28" cy="16" r="2" fill="currentColor" opacity="0.3" />
-      <circle cx="4" cy="16" r="2" fill="currentColor" opacity="0.3" />
+      <circle cx="28" cy="16" r="2" fill="none" />
+      <circle cx="4" cy="16" r="2" fill="none" />
     </svg>
   ),
   thermometer: (
     <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M16 4a3 3 0 00-3 3v12a5 5 0 106 0V7a3 3 0 00-3-3z" />
       <path d="M16 22v-8" />
-      <circle cx="16" cy="22" r="2" fill="currentColor" opacity="0.3" />
+      <circle cx="16" cy="22" r="2" fill="none" />
     </svg>
   ),
   bolt: (
@@ -105,10 +107,10 @@ const ICONS: Record<string, ReactNode> = {
   palette: (
     <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="16" cy="16" r="12" />
-      <circle cx="12" cy="11" r="2" fill="#ef4444" stroke="none" />
-      <circle cx="20" cy="11" r="2" fill="#3b82f6" stroke="none" />
-      <circle cx="10" cy="18" r="2" fill="#22c55e" stroke="none" />
-      <circle cx="22" cy="17" r="2" fill="#000" stroke="none" />
+      <circle cx="12" cy="11" r="2" />
+      <circle cx="20" cy="11" r="2" />
+      <circle cx="10" cy="18" r="2" />
+      <circle cx="22" cy="17" r="2" />
     </svg>
   ),
   neutral: (
@@ -139,59 +141,136 @@ const ICONS: Record<string, ReactNode> = {
 }
 
 const COLOR_MAP = {
-  sky:     { bg: 'bg-sky-50',     border: 'border-sky-200',     icon: 'text-sky-500',     accent: 'text-sky-600' },
-  rose:    { bg: 'bg-rose-50',    border: 'border-rose-200',    icon: 'text-rose-500',    accent: 'text-rose-600' },
-  amber:   { bg: 'bg-amber-50',   border: 'border-amber-200',   icon: 'text-amber-500',   accent: 'text-amber-600' },
-  emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', icon: 'text-emerald-500', accent: 'text-emerald-600' },
-  violet:  { bg: 'bg-violet-50',  border: 'border-violet-200',  icon: 'text-violet-500',  accent: 'text-violet-600' },
-  slate:   { bg: 'bg-slate-50',   border: 'border-slate-200',   icon: 'text-slate-500',   accent: 'text-slate-600' },
+  sky:     { fill: 'rgba(186,230,253,0.35)', stroke: '#0ea5e9', icon: 'text-sky-600',     accent: '#0284c7' },
+  rose:    { fill: 'rgba(254,205,211,0.35)', stroke: '#f43f5e', icon: 'text-rose-600',    accent: '#e11d48' },
+  amber:   { fill: 'rgba(253,230,138,0.35)', stroke: '#f59e0b', icon: 'text-amber-600',   accent: '#d97706' },
+  emerald: { fill: 'rgba(167,243,208,0.35)', stroke: '#10b981', icon: 'text-emerald-600', accent: '#059669' },
+  violet:  { fill: 'rgba(221,214,254,0.35)', stroke: '#8b5cf6', icon: 'text-violet-600',  accent: '#7c3aed' },
+  slate:   { fill: 'rgba(226,232,240,0.35)', stroke: '#64748b', icon: 'text-slate-600',   accent: '#475569' },
+}
+
+function RoughBorder({ color, children }: { color: keyof typeof COLOR_MAP; children: ReactNode }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const c = COLOR_MAP[color]
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const container = containerRef.current
+    if (!canvas || !container) return
+
+    const rect = container.getBoundingClientRect()
+    const w = rect.width
+    const h = rect.height
+    const dpr = window.devicePixelRatio || 1
+
+    canvas.width = w * dpr
+    canvas.height = h * dpr
+    canvas.style.width = `${w}px`
+    canvas.style.height = `${h}px`
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.scale(dpr, dpr)
+
+    const rc = rough.canvas(canvas)
+
+    // Paper-like background
+    rc.rectangle(2, 2, w - 4, h - 4, {
+      fill: c.fill,
+      stroke: c.stroke,
+      strokeWidth: 1.5,
+      roughness: 2,
+      fillStyle: 'solid',
+      bowing: 1.5,
+    })
+  }, [c])
+
+  return (
+    <div ref={containerRef} className="relative min-w-[160px] flex-1">
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+      <div className="relative z-10 p-4">
+        {children}
+      </div>
+    </div>
+  )
 }
 
 function Card({ card, index }: { card: InfoCard; index: number }) {
-  const c = COLOR_MAP[card.color ?? 'sky']
+  const color = card.color ?? 'sky'
+  const c = COLOR_MAP[color]
   const iconEl = ICONS[card.icon] ?? ICONS.bolt
 
   return (
-    <div className={`group relative ${c.bg} ${c.border} border rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow min-w-[160px] flex-1`}>
-      {/* Step number */}
-      <span className={`absolute -top-2.5 -left-2 text-xs font-bold ${c.accent} bg-white border ${c.border} rounded-full w-6 h-6 flex items-center justify-center shadow-sm`}>
+    <RoughBorder color={color}>
+      {/* Step number — hand-drawn circle */}
+      <span
+        className="absolute -top-3 -left-2 w-7 h-7 flex items-center justify-center rounded-full bg-white text-sm z-20 shadow-sm"
+        style={{ fontFamily: "'Caveat', cursive", fontWeight: 700, color: c.accent, border: `1.5px solid ${c.stroke}` }}
+      >
         {index + 1}
       </span>
 
-      {/* Icon */}
-      <div className={`w-10 h-10 ${c.icon} mb-3`}>
+      {/* Icon — linear, no fill */}
+      <div className={`w-9 h-9 ${c.icon} mb-2 opacity-80`}>
         {iconEl}
       </div>
 
-      {/* Title */}
-      <h4 className="text-sm font-bold text-gray-800 leading-tight mb-2">
+      {/* Title — handwritten */}
+      <h4
+        className="text-base font-bold text-gray-800 leading-tight mb-1"
+        style={{ fontFamily: "'Caveat', cursive" }}
+      >
         {card.title}
       </h4>
 
-      {/* Handwritten note */}
-      <p className="text-xs text-gray-500 leading-relaxed italic" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>
+      {/* Note — handwritten smaller */}
+      <p
+        className="text-sm text-gray-500 leading-snug"
+        style={{ fontFamily: "'Caveat', cursive" }}
+      >
         {card.note}
       </p>
-    </div>
+    </RoughBorder>
   )
+}
+
+function SketchyArrow() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const dpr = window.devicePixelRatio || 1
+    canvas.width = 28 * dpr
+    canvas.height = 40 * dpr
+    canvas.style.width = '28px'
+    canvas.style.height = '40px'
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.scale(dpr, dpr)
+
+    const rc = rough.canvas(canvas)
+    rc.line(4, 20, 20, 20, { stroke: '#94a3b8', strokeWidth: 1.5, roughness: 1.5 })
+    rc.line(15, 14, 22, 20, { stroke: '#94a3b8', strokeWidth: 1.5, roughness: 1.2 })
+    rc.line(15, 26, 22, 20, { stroke: '#94a3b8', strokeWidth: 1.5, roughness: 1.2 })
+  }, [])
+
+  return <canvas ref={canvasRef} className="flex-shrink-0 mx-0.5" style={{ width: 28, height: 40 }} />
 }
 
 export default function InfografiaCreativa({ cards }: { cards: InfoCard[] }) {
   if (!cards || cards.length === 0) return null
 
   return (
-    <div className="mb-5 rounded-2xl bg-white/95 border border-gray-100 shadow-sm p-5 overflow-x-auto">
-      <div className="flex gap-3 min-w-max">
+    <div className="mb-5 rounded-2xl bg-amber-50/30 border border-amber-200/40 shadow-sm p-5 overflow-x-auto"
+      style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' viewBox=\'0 0 6 6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23d4a574\' fill-opacity=\'0.06\'%3E%3Cpath d=\'M5 0h1L0 5v1zM6 5v1H5z\'/%3E%3C/g%3E%3C/svg%3E")' }}
+    >
+      <div className="flex gap-3 min-w-max items-stretch">
         {cards.map((card, i) => (
           <div key={i} className="flex items-center">
             <Card card={card} index={i} />
-            {i < cards.length - 1 && (
-              <div className="flex-shrink-0 mx-1.5 text-gray-300">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                  <path d="M7 4l6 6-6 6" />
-                </svg>
-              </div>
-            )}
+            {i < cards.length - 1 && <SketchyArrow />}
           </div>
         ))}
       </div>
