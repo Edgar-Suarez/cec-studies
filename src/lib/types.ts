@@ -64,6 +64,13 @@ export interface SketchData {
   height?: number
 }
 
+export interface InfoCard {
+  icon: string
+  title: string
+  note: string
+  color?: 'sky' | 'rose' | 'amber' | 'emerald' | 'violet' | 'slate'
+}
+
 export interface StudyGuideSubsection {
   id: string
   title: string
@@ -73,6 +80,7 @@ export interface StudyGuideSubsection {
   keyPoints: string[]
   diagramaMermaid: string
   sketchData?: SketchData
+  infoCards?: InfoCard[]
 }
 
 export interface StudyGuideSection {

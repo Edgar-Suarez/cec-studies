@@ -4,10 +4,9 @@ import { useState } from 'react'
 import { studyGuideSections } from '../../data/studyGuide'
 import { questions, allSections } from '../../data/questions'
 import Link from 'next/link'
-import DiagramaExplicativo from '../../components/DiagramaExplicativo'
-import SketchRenderer from '../../components/SketchRenderer'
+import InfografiaCreativa from '../../components/InfografiaCreativa'
 
-type Tab = 'explanation' | 'scenario' | 'keypoints' | 'diagram' | 'sketch'
+type Tab = 'explanation' | 'scenario' | 'keypoints'
 
 function SectionSelector({
   selectedSection,
@@ -70,15 +69,12 @@ function SubsectionCard({
 }) {
   const [activeTab, setActiveTab] = useState<Tab>('explanation')
 
-  const hasDiagram = subsection.diagramaMermaid?.trim().length > 0
-  const hasSketch = subsection.sketchData != null && subsection.sketchData.nodes.length > 0
+  const hasInfoCards = subsection.infoCards != null && subsection.infoCards.length > 0
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'explanation', label: 'Explanation' },
     { id: 'scenario', label: 'Field Scenario' },
     { id: 'keypoints', label: 'Key Points' },
-    ...(hasDiagram ? [{ id: 'diagram' as Tab, label: 'Diagram' }] : []),
-    ...(hasSketch ? [{ id: 'sketch' as Tab, label: 'Sketch' }] : []),
   ]
 
   return (
@@ -108,17 +104,22 @@ function SubsectionCard({
 
       <div className="p-5">
         {activeTab === 'explanation' && (
-          <div className="prose prose-invert prose-sm max-w-none">
-            {subsection.explanation.split('\n\n').map((paragraph, i) => (
-              <p key={i} className="text-gray-300 leading-relaxed mb-3 last:mb-0">
-                {paragraph.split('\n').map((line, j) => (
-                  <span key={j}>
-                    {line}
-                    {j < paragraph.split('\n').length - 1 && <br />}
-                  </span>
-                ))}
-              </p>
-            ))}
+          <div>
+            {hasInfoCards && (
+              <InfografiaCreativa cards={subsection.infoCards!} />
+            )}
+            <div className="prose prose-invert prose-sm max-w-none">
+              {subsection.explanation.split('\n\n').map((paragraph, i) => (
+                <p key={i} className="text-gray-300 leading-relaxed mb-3 last:mb-0">
+                  {paragraph.split('\n').map((line, j) => (
+                    <span key={j}>
+                      {line}
+                      {j < paragraph.split('\n').length - 1 && <br />}
+                    </span>
+                  ))}
+                </p>
+              ))}
+            </div>
           </div>
         )}
 
@@ -170,14 +171,6 @@ function SubsectionCard({
               ))}
             </ul>
           </div>
-        )}
-
-        {activeTab === 'diagram' && hasDiagram && (
-          <DiagramaExplicativo chart={subsection.diagramaMermaid} />
-        )}
-
-        {activeTab === 'sketch' && hasSketch && (
-          <SketchRenderer data={subsection.sketchData!} />
         )}
       </div>
     </div>

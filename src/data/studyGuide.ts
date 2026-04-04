@@ -40,34 +40,14 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style H fill:#92400e,stroke:#f59e0b,color:#e2e8f0
     style K fill:#065f46,stroke:#10b981,color:#e2e8f0`,
-        sketchData: {
-          width: 700,
-          height: 380,
-          nodes: [
-            { id: 'permit', x: 20, y: 20, w: 140, h: 50, label: '1. Get PERMIT\n(Rule 2-004)', color: 'blue' },
-            { id: 'apply', x: 190, y: 20, w: 140, h: 50, label: '2. APPLICATION\n(Rule 2-006)', color: 'blue' },
-            { id: 'fees', x: 360, y: 20, w: 130, h: 50, label: '3. Pay FEES\n(Rule 2-008)', color: 'blue' },
-            { id: 'post', x: 520, y: 20, w: 150, h: 50, label: '4. POST permit\n(Rule 2-010)', color: 'green' },
-            { id: 'work', x: 20, y: 120, w: 140, h: 50, label: '5. DO THE WORK', color: 'purple' },
-            { id: 'notify', x: 190, y: 120, w: 160, h: 50, label: '6. NOTIFY inspector\nIN WRITING\n(Rule 2-012)', color: 'yellow' },
-            { id: 'inspect', x: 400, y: 120, w: 140, h: 60, label: 'Inspector\napproves?', color: 'yellow', type: 'diamond' },
-            { id: 'current', x: 250, y: 240, w: 200, h: 50, label: '7. CURRENT-PERMIT\n(Rule 2-016)', color: 'green' },
-            { id: 'energize', x: 250, y: 320, w: 200, h: 45, label: '8. Utility ENERGIZES', color: 'green', type: 'ellipse' },
-            { id: 'fix', x: 560, y: 120, w: 120, h: 50, label: 'Fix issues\n& re-notify', color: 'red' },
-          ],
-          edges: [
-            { from: 'permit', to: 'apply' },
-            { from: 'apply', to: 'fees' },
-            { from: 'fees', to: 'post' },
-            { from: 'post', to: 'work' },
-            { from: 'work', to: 'notify' },
-            { from: 'notify', to: 'inspect' },
-            { from: 'inspect', to: 'current', label: 'YES' },
-            { from: 'inspect', to: 'fix', label: 'NO' },
-            { from: 'fix', to: 'notify' },
-            { from: 'current', to: 'energize' },
-          ],
-        },
+        infoCards: [
+          { icon: 'permit', title: 'Get the Permit', note: 'Before touching a single wire — Rule 2-004', color: 'sky' },
+          { icon: 'fee', title: 'Pay Your Fees', note: 'At time of application, not after — Rule 2-008', color: 'amber' },
+          { icon: 'post', title: 'Post It Visibly', note: 'On-site until inspection is done — Rule 2-010', color: 'emerald' },
+          { icon: 'write', title: 'Notify in Writing', note: 'Give the inspector time before you cover anything — Rule 2-012', color: 'violet' },
+          { icon: 'inspect', title: 'Pass Inspection', note: 'Fix any deficiencies, then re-notify', color: 'rose' },
+          { icon: 'power', title: 'Current-Permit', note: 'Only then can the utility energize — Rule 2-016', color: 'emerald' },
+        ],
       },
       {
         id: '2-marking',
@@ -103,6 +83,12 @@ export const studyGuideSections: StudyGuideSection[] = [
     D --> D2["Rebuilt MCCBs =\\nNOT APPROVED"]
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style D2 fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
+        infoCards: [
+          { icon: 'label', title: 'Read the Nameplate', note: 'Voltage, amps, phases, Hz, approval — it must all be there', color: 'sky' },
+          { icon: 'bolt', title: 'Service Box Mark', note: 'Permanently show max OCPD rating — Rule 2-100(2)', color: 'amber' },
+          { icon: 'warning', title: 'Caution Label', note: 'When continuous load is less than breaker rating — Rule 2-100(4)', color: 'rose' },
+          { icon: 'shield', title: 'Never Use Rebuilt MCCBs', note: 'Refurbished breakers are NOT approved — Rule 2-106(4)', color: 'rose' },
+        ],
       },
       {
         id: '2-installation',
@@ -143,6 +129,12 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style K fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0
     style M fill:#92400e,stroke:#f59e0b,color:#e2e8f0`,
+        infoCards: [
+          { icon: 'bolt', title: 'Max 150V to Ground', note: 'Dwelling branch circuits stay within safe limits — Rule 2-110', color: 'sky' },
+          { icon: 'fire', title: 'Thermal Insulation', note: 'Traps heat! Know the exceptions for loose fill, batt & metal-faced — Rule 2-126', color: 'amber' },
+          { icon: 'shield', title: 'Seal Fire Penetrations', note: 'Every raceway or cable through a firewall must be sealed per NBC — Rule 2-128', color: 'rose' },
+          { icon: 'sun', title: 'Sunlight Resistant', note: 'Conductors in direct sunlight must be marked accordingly — Rule 2-136', color: 'emerald' },
+        ],
       },
       {
         id: '2-protection',
@@ -169,6 +161,11 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style F fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0
     style H fill:#92400e,stroke:#f59e0b,color:#e2e8f0`,
+        infoCards: [
+          { icon: 'shield', title: 'Guard & Enclose', note: 'All equipment must protect people and property — Rule 2-200', color: 'emerald' },
+          { icon: 'lock', title: 'Bare Parts = Locked Room', note: 'Exposed live parts only behind enclosures or restricted access — Rule 2-202', color: 'rose' },
+          { icon: 'warning', title: '900mm Barrier Zone', note: 'Non-electrical parts near live parts need barriers for unqualified service — Rule 2-202(2)', color: 'amber' },
+        ],
       },
       {
         id: '2-maintenance',
@@ -208,6 +205,12 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style I fill:#92400e,stroke:#f59e0b,color:#e2e8f0
     style K fill:#065f46,stroke:#10b981,color:#e2e8f0`,
+        infoCards: [
+          { icon: 'ruler', title: '1m Clear Space', note: 'Minimum working distance in front of any equipment — Rule 2-308', color: 'sky' },
+          { icon: 'warning', title: '2.2m Headroom', note: 'Switchboards & MCCs with bare live parts need full height — Rule 2-308(5)', color: 'amber' },
+          { icon: 'shield', title: 'Escape Route', note: 'Equipment >= 1200A: exit without passing the failure point — Rule 2-310', color: 'rose' },
+          { icon: 'label', title: 'Arc Flash Labels', note: 'Required on panels, MCCs, meter sockets — not in dwellings — Rule 2-306', color: 'violet' },
+        ],
       },
       {
         id: '2-enclosures',
@@ -243,27 +246,13 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style E fill:#065f46,stroke:#10b981,color:#e2e8f0
     style J fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
-        sketchData: {
-          width: 680,
-          height: 320,
-          nodes: [
-            { id: 'title', x: 240, y: 10, w: 200, h: 40, label: 'SELECT ENCLOSURE', color: 'blue', type: 'ellipse' },
-            { id: 't1', x: 20, y: 100, w: 120, h: 55, label: 'TYPE 1\nIndoors\nOrdinary', color: 'blue' },
-            { id: 't2', x: 155, y: 100, w: 120, h: 55, label: 'TYPE 2\nIndoors\nCondensation', color: 'blue' },
-            { id: 't3r', x: 290, y: 100, w: 120, h: 55, label: 'TYPE 3R\nOutdoors\n(Most common)', color: 'green' },
-            { id: 't4', x: 425, y: 100, w: 120, h: 55, label: 'TYPE 4\nDirect water\nstreams', color: 'yellow' },
-            { id: 't5', x: 560, y: 100, w: 100, h: 55, label: 'TYPE 5\nDust/Lint\nFibres', color: 'purple' },
-            { id: 'rule', x: 180, y: 210, w: 320, h: 45, label: 'Can substitute HIGHER type\nNEVER lower (Rule 2-400-2)', color: 'red' },
-            { id: 'motors', x: 180, y: 270, w: 320, h: 40, label: 'Motors: DP=Drip-proof  WP=Weatherproof  TE=Enclosed', color: 'default' },
-          ],
-          edges: [
-            { from: 'title', to: 't1' },
-            { from: 'title', to: 't2' },
-            { from: 'title', to: 't3r' },
-            { from: 'title', to: 't4' },
-            { from: 'title', to: 't5' },
-          ],
-        },
+        infoCards: [
+          { icon: 'box', title: 'Type 1 — Indoors', note: 'Ordinary dry locations, the default choice', color: 'sky' },
+          { icon: 'box', title: 'Type 3R — Outdoors', note: 'Most common outdoor rating — your go-to for exterior work', color: 'emerald' },
+          { icon: 'box', title: 'Type 4 — Water Streams', note: 'Direct hose-down or heavy rain exposure', color: 'amber' },
+          { icon: 'box', title: 'Type 5 — Dusty', note: 'Settling dust, lint, fibres indoors (workshops, mills)', color: 'violet' },
+          { icon: 'shield', title: 'Substitution Rule', note: 'Always go HIGHER, never lower — Rule 2-400(2)', color: 'rose' },
+        ],
       },
     ],
   },
@@ -302,6 +291,11 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style C fill:#065f46,stroke:#10b981,color:#e2e8f0
     style D fill:#065f46,stroke:#10b981,color:#e2e8f0`,
+        infoCards: [
+          { icon: 'wire', title: 'Copper Min: #14 AWG', note: 'The baseline for all general copper wiring — Rule 4-002', color: 'sky' },
+          { icon: 'wire', title: 'Aluminum Min: #12 AWG', note: 'Two sizes larger than copper — lower conductivity — Rule 4-002', color: 'violet' },
+          { icon: 'wire', title: 'Flex Cord: #18 AWG', note: 'Smaller is OK for cords, tinsel goes down to #27 — Rule 4-010', color: 'slate' },
+        ],
       },
       {
         id: '4-ampacity',
@@ -338,32 +332,13 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style F fill:#065f46,stroke:#10b981,color:#e2e8f0
     style N fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
-        sketchData: {
-          width: 700,
-          height: 360,
-          nodes: [
-            { id: 'q', x: 260, y: 10, w: 180, h: 40, label: 'WHICH TABLE?', color: 'blue', type: 'ellipse' },
-            { id: 'cu', x: 80, y: 90, w: 140, h: 40, label: 'COPPER', color: 'blue' },
-            { id: 'al', x: 480, y: 90, w: 140, h: 40, label: 'ALUMINUM', color: 'purple' },
-            { id: 'cu-air', x: 10, y: 170, w: 130, h: 50, label: 'Free Air\nTABLE 1', color: 'green' },
-            { id: 'cu-rac', x: 160, y: 170, w: 130, h: 50, label: 'Raceway 1-3\nTABLE 2', color: 'green' },
-            { id: 'cu-4', x: 85, y: 250, w: 130, h: 50, label: '4+ conductors\nTbl 2 x Tbl 5C', color: 'yellow' },
-            { id: 'al-air', x: 410, y: 170, w: 130, h: 50, label: 'Free Air\nTABLE 3', color: 'green' },
-            { id: 'al-rac', x: 560, y: 170, w: 130, h: 50, label: 'Raceway 1-3\nTABLE 4', color: 'green' },
-            { id: 'al-4', x: 485, y: 250, w: 130, h: 50, label: '4+ conductors\nTbl 4 x Tbl 5C', color: 'yellow' },
-            { id: 'count', x: 220, y: 310, w: 260, h: 40, label: 'Neutral(unbal)=NO  Bond=NO  Neutral(load)=YES', color: 'red' },
-          ],
-          edges: [
-            { from: 'q', to: 'cu' },
-            { from: 'q', to: 'al' },
-            { from: 'cu', to: 'cu-air' },
-            { from: 'cu', to: 'cu-rac' },
-            { from: 'cu-rac', to: 'cu-4', label: '4+' },
-            { from: 'al', to: 'al-air' },
-            { from: 'al', to: 'al-rac' },
-            { from: 'al-rac', to: 'al-4', label: '4+' },
-          ],
-        },
+        infoCards: [
+          { icon: 'wire', title: 'Cu Free Air = Tbl 1', note: 'Single conductor, spacing >= 100% diameter', color: 'sky' },
+          { icon: 'wire', title: 'Cu Raceway = Tbl 2', note: 'The everyday table — 1 to 3 conductors in conduit', color: 'emerald' },
+          { icon: 'wire', title: 'Al Free Air = Tbl 3', note: 'Same concept as Table 1 but for aluminum', color: 'violet' },
+          { icon: 'wire', title: 'Al Raceway = Tbl 4', note: 'Aluminum equivalent of Table 2', color: 'violet' },
+          { icon: 'neutral', title: 'Neutral: Count It?', note: 'Unbalanced only = NO. Carrying load = YES. Bond = NEVER.', color: 'rose' },
+        ],
       },
       {
         id: '4-correction',
@@ -405,6 +380,13 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style C fill:#92400e,stroke:#f59e0b,color:#e2e8f0
     style G fill:#92400e,stroke:#f59e0b,color:#e2e8f0`,
+        infoCards: [
+          { icon: 'thermometer', title: 'Tbl 5A: Ambient > 30C', note: 'Hot room? Derate for the environment', color: 'rose' },
+          { icon: 'wire', title: 'Tbl 5C: 4+ Bundled', note: 'More wires together = more heat = lower ampacity', color: 'amber' },
+          { icon: 'wire', title: 'Tbl 5D: 25-100% Spacing', note: 'Moderate proximity in free air cables', color: 'sky' },
+          { icon: 'shield', title: 'Exempt: < 600mm', note: 'Short bundled runs under 600mm skip Table 5C derating', color: 'emerald' },
+          { icon: 'thermometer', title: 'Lowest Temp Wins', note: 'Mixed insulation ratings in same raceway? Use the lowest — Rule 4-004(14)', color: 'violet' },
+        ],
       },
       {
         id: '4-temperature',
@@ -436,6 +418,11 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style E fill:#92400e,stroke:#f59e0b,color:#e2e8f0
     style F fill:#065f46,stroke:#10b981,color:#e2e8f0`,
+        infoCards: [
+          { icon: 'thermometer', title: '<= 100A: Assume 60C', note: 'Unmarked equipment? Default to the conservative column — Rule 4-006(2a)', color: 'sky' },
+          { icon: 'thermometer', title: '> 100A: Assume 75C', note: 'Larger equipment gets the 75C column — Rule 4-006(2b)', color: 'emerald' },
+          { icon: 'ruler', title: 'First 1.2m Only', note: 'Termination temp rule only applies near the connection point — Rule 4-006(4)', color: 'amber' },
+        ],
       },
       {
         id: '4-induced',
@@ -471,6 +458,11 @@ export const studyGuideSections: StudyGuideSection[] = [
     style C fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style E fill:#065f46,stroke:#10b981,color:#e2e8f0`,
+        infoCards: [
+          { icon: 'magnet', title: '> 200A = One Plate', note: 'All conductors through a single non-ferrous plate to avoid induction heating — Rule 4-008', color: 'rose' },
+          { icon: 'bolt', title: 'Sheath Currents: 70%', note: 'Metal-sheathed cables overheating? Derate to 70% — Rule 4-008(1a)', color: 'amber' },
+          { icon: 'wire', title: 'Flex Cord: Table 12', note: '2-3 cond = 100%, 4-6 = 80%, 7-24 = 70%, 25+ keep dropping', color: 'sky' },
+        ],
       },
       {
         id: '4-neutral',
@@ -507,6 +499,12 @@ export const studyGuideSections: StudyGuideSection[] = [
     style D fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0
     style E fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0
     style H fill:#92400e,stroke:#f59e0b,color:#e2e8f0`,
+        infoCards: [
+          { icon: 'neutral', title: 'Must Be Insulated', note: 'Temp rating >= phase conductors — no cheap insulation on neutrals — Rule 4-016', color: 'sky' },
+          { icon: 'bolt', title: 'Lighting = No Reduction', note: 'Electric-discharge and non-linear loads: full neutral size, no exceptions', color: 'rose' },
+          { icon: 'fee', title: '70% Over 200A', note: 'Demand factor on the excess portion only — Rule 4-018(2b)', color: 'amber' },
+          { icon: 'wire', title: 'Min: #10 Cu / #8 Al', note: 'Service neutral floor regardless of calculations — Rule 4-018(3a)', color: 'emerald' },
+        ],
       },
       {
         id: '4-identification',
@@ -547,28 +545,14 @@ export const studyGuideSections: StudyGuideSection[] = [
     style A fill:#1e3a5f,stroke:#3b82f6,color:#e2e8f0
     style J fill:#065f46,stroke:#10b981,color:#e2e8f0
     style O fill:#7f1d1d,stroke:#ef4444,color:#e2e8f0`,
-        sketchData: {
-          width: 680,
-          height: 330,
-          nodes: [
-            { id: 'title', x: 230, y: 10, w: 220, h: 40, label: 'CEC COLOR CODE\n(Rule 4-032)', color: 'blue', type: 'ellipse' },
-            { id: 'a', x: 30, y: 90, w: 110, h: 45, label: 'Phase A\nRED', color: 'red' },
-            { id: 'b', x: 160, y: 90, w: 110, h: 45, label: 'Phase B\nBLACK', color: 'default' },
-            { id: 'c', x: 290, y: 90, w: 110, h: 45, label: 'Phase C\nBLUE', color: 'blue' },
-            { id: 'n', x: 420, y: 90, w: 110, h: 45, label: 'Neutral\nWHITE', color: 'default' },
-            { id: 'g', x: 550, y: 90, w: 110, h: 45, label: 'Ground\nGREEN', color: 'green' },
-            { id: 'small', x: 30, y: 180, w: 280, h: 45, label: 'Neutral <= #2 AWG: White or 3 white stripes\n(continuous identification)', color: 'default' },
-            { id: 'large', x: 370, y: 180, w: 280, h: 45, label: 'Neutral > #2 AWG: White OR labeled\nat each end (Rule 4-026)', color: 'default' },
-            { id: 'delta', x: 140, y: 270, w: 400, h: 45, label: '4-Wire Delta: Phase A (RED) = HIGH LEG ~208V\nKeep separated from single-phase compartment', color: 'red' },
-          ],
-          edges: [
-            { from: 'title', to: 'a' },
-            { from: 'title', to: 'b' },
-            { from: 'title', to: 'c' },
-            { from: 'title', to: 'n' },
-            { from: 'title', to: 'g' },
-          ],
-        },
+        infoCards: [
+          { icon: 'palette', title: 'Phase A = Red', note: 'First phase — and the high leg in delta systems', color: 'rose' },
+          { icon: 'palette', title: 'Phase B = Black', note: 'Second phase — the darkest conductor', color: 'slate' },
+          { icon: 'palette', title: 'Phase C = Blue', note: 'Third phase — distinct from the first two', color: 'sky' },
+          { icon: 'neutral', title: 'Neutral = White', note: 'Or 3 white stripes for <= #2 AWG — Rule 4-024', color: 'slate' },
+          { icon: 'shield', title: 'Ground = Green', note: 'Green or green/yellow — exclusively reserved, never repurpose — Rule 4-032', color: 'emerald' },
+          { icon: 'warning', title: 'Delta High Leg', note: 'Phase A (red) at ~208V to ground — keep separated! — Rule 4-032(4)', color: 'rose' },
+        ],
       },
     ],
   },
