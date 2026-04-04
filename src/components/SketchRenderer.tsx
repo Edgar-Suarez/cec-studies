@@ -154,9 +154,9 @@ export default function SketchRenderer({ data }: { data: SketchData }) {
   }, [data, w, h])
 
   return (
-    <div className="my-4 rounded-xl border border-purple-500/20 bg-gradient-to-br from-slate-900 to-slate-800 p-4 overflow-x-auto">
-      <div className="flex items-center gap-2 text-purple-400 text-xs font-semibold uppercase tracking-wider mb-3">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="rounded-2xl border border-violet-500/10 bg-gradient-to-br from-gray-900/80 via-slate-900/60 to-gray-900/80 p-6 overflow-x-auto shadow-lg shadow-violet-500/5 backdrop-blur-sm">
+      <div className="flex items-center gap-2 text-violet-400/80 text-[10px] font-semibold uppercase tracking-widest mb-4">
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
         </svg>
         Hand-drawn Sketch
