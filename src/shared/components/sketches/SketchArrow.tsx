@@ -8,6 +8,7 @@ interface SketchArrowProps {
   to: { x: number; y: number }
   curve?: number
   color?: string
+  strokeWidth?: number
   width?: number
   height?: number
   className?: string
@@ -17,7 +18,8 @@ export default function SketchArrow({
   from,
   to,
   curve = 30,
-  color = '#64748b',
+  color = '#d4856a',
+  strokeWidth = 2.5,
   width = 200,
   height = 100,
   className = '',
@@ -40,10 +42,12 @@ export default function SketchArrow({
 
     const rc = rough.canvas(canvas)
 
-    // Curved path via quadratic bezier approximated with line segments
+    // Quadratic bezier control point
     const cx = (from.x + to.x) / 2
     const cy = Math.min(from.y, to.y) - curve
-    const steps = 20
+
+    // Draw the curve as segments
+    const steps = 16
     for (let i = 0; i < steps; i++) {
       const t0 = i / steps
       const t1 = (i + 1) / steps
@@ -55,31 +59,31 @@ export default function SketchArrow({
 
       rc.line(x0, y0, x1, y1, {
         stroke: color,
-        strokeWidth: 1.5,
-        roughness: i === 0 ? 2 : 0.5,
+        strokeWidth,
+        roughness: i === 0 ? 1.5 : 0.4,
       })
     }
 
-    // Arrowhead at the end
+    // Arrowhead — thick and visible
     const t = (steps - 1) / steps
     const prevX = (1 - t) * (1 - t) * from.x + 2 * (1 - t) * t * cx + t * t * to.x
     const prevY = (1 - t) * (1 - t) * from.y + 2 * (1 - t) * t * cy + t * t * to.y
     const angle = Math.atan2(to.y - prevY, to.x - prevX)
-    const headLen = 10
+    const headLen = 14
 
     rc.line(
       to.x, to.y,
       to.x - headLen * Math.cos(angle - Math.PI / 5),
       to.y - headLen * Math.sin(angle - Math.PI / 5),
-      { stroke: color, strokeWidth: 1.8, roughness: 1.5 }
+      { stroke: color, strokeWidth: strokeWidth + 0.5, roughness: 1.2 }
     )
     rc.line(
       to.x, to.y,
       to.x - headLen * Math.cos(angle + Math.PI / 5),
       to.y - headLen * Math.sin(angle + Math.PI / 5),
-      { stroke: color, strokeWidth: 1.8, roughness: 1.5 }
+      { stroke: color, strokeWidth: strokeWidth + 0.5, roughness: 1.2 }
     )
-  }, [from, to, curve, color, width, height])
+  }, [from, to, curve, color, strokeWidth, width, height])
 
   return <canvas ref={canvasRef} className={className} style={{ width, height }} />
 }

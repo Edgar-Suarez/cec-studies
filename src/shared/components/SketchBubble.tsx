@@ -12,7 +12,7 @@ interface SketchBubbleProps {
 
 export default function SketchBubble({
   children,
-  color = '#3b82f6',
+  color = '#333',
   tail = 'bottom',
   className = '',
 }: SketchBubbleProps) {
@@ -32,7 +32,7 @@ export default function SketchBubble({
       if (w === 0 || h === 0) return
 
       const dpr = window.devicePixelRatio || 1
-      const extra = 20
+      const extra = 24
       canvas.width = (w + extra * 2) * dpr
       canvas.height = (h + extra * 2) * dpr
       canvas.style.width = `${w + extra * 2}px`
@@ -46,51 +46,66 @@ export default function SketchBubble({
 
       const rc = rough.canvas(canvas)
 
-      // Bubble body
+      // Rounded bubble body using ellipse for organic shape
       const bx = extra
       const by = extra
       const bw = w
       const bh = h
-      rc.rectangle(bx, by, bw, bh, {
-        stroke: color,
-        strokeWidth: 1.5,
-        roughness: 2.5,
-        bowing: 2,
-        fill: 'rgba(253,251,247,0.95)',
-        fillStyle: 'solid',
-      })
+      const rx = Math.min(bw, bh) * 0.15
+
+      // Draw rounded rect path via lines + arcs approximated by roughjs
+      rc.path(
+        `M ${bx + rx} ${by}
+         L ${bx + bw - rx} ${by}
+         Q ${bx + bw} ${by} ${bx + bw} ${by + rx}
+         L ${bx + bw} ${by + bh - rx}
+         Q ${bx + bw} ${by + bh} ${bx + bw - rx} ${by + bh}
+         L ${bx + rx} ${by + bh}
+         Q ${bx} ${by + bh} ${bx} ${by + bh - rx}
+         L ${bx} ${by + rx}
+         Q ${bx} ${by} ${bx + rx} ${by}
+         Z`,
+        {
+          stroke: color,
+          strokeWidth: 2,
+          roughness: 1.8,
+          bowing: 1.5,
+          fill: 'rgba(253,251,247,0.95)',
+          fillStyle: 'solid',
+        }
+      )
 
       // Tail
       if (tail !== 'none') {
         const pts: [number, number][] = []
         if (tail === 'bottom') {
-          const cx = bx + bw * 0.35
-          pts.push([cx, by + bh], [cx + 12, by + bh + 16], [cx + 20, by + bh])
+          const cx = bx + bw * 0.3
+          pts.push([cx + 2, by + bh - 1], [cx + 8, by + bh + 18], [cx + 22, by + bh - 1])
         } else if (tail === 'top') {
-          const cx = bx + bw * 0.35
-          pts.push([cx, by], [cx + 12, by - 16], [cx + 20, by])
+          const cx = bx + bw * 0.3
+          pts.push([cx + 2, by + 1], [cx + 8, by - 18], [cx + 22, by + 1])
         } else if (tail === 'left') {
-          const cy = by + bh * 0.4
-          pts.push([bx, cy], [bx - 16, cy + 8], [bx, cy + 18])
+          const cy = by + bh * 0.35
+          pts.push([bx + 1, cy], [bx - 18, cy + 10], [bx + 1, cy + 20])
         } else if (tail === 'right') {
-          const cy = by + bh * 0.4
-          pts.push([bx + bw, cy], [bx + bw + 16, cy + 8], [bx + bw, cy + 18])
+          const cy = by + bh * 0.35
+          pts.push([bx + bw - 1, cy], [bx + bw + 18, cy + 10], [bx + bw - 1, cy + 20])
         }
         if (pts.length === 3) {
           rc.polygon(pts, {
             stroke: color,
-            strokeWidth: 1.5,
-            roughness: 2,
+            strokeWidth: 2,
+            roughness: 1.5,
             fill: 'rgba(253,251,247,0.95)',
             fillStyle: 'solid',
           })
-          // Cover the shared edge between bubble and tail
+          // Erase shared edge
           ctx.save()
           ctx.fillStyle = '#fdfbf7'
-          if (tail === 'bottom') ctx.fillRect(pts[0][0] + 2, pts[0][1] - 2, pts[2][0] - pts[0][0] - 4, 4)
-          if (tail === 'top') ctx.fillRect(pts[0][0] + 2, pts[0][1] - 2, pts[2][0] - pts[0][0] - 4, 4)
-          if (tail === 'left') ctx.fillRect(pts[0][0] - 2, pts[0][1] + 2, 4, pts[2][1] - pts[0][1] - 4)
-          if (tail === 'right') ctx.fillRect(pts[0][0] - 2, pts[0][1] + 2, 4, pts[2][1] - pts[0][1] - 4)
+          if (tail === 'bottom') ctx.fillRect(pts[0][0] + 3, pts[0][1] - 3, pts[2][0] - pts[0][0] - 6, 6)
+          if (tail === 'top') ctx.fillRect(pts[0][0] + 3, pts[0][1] - 3, pts[2][0] - pts[0][0] - 6, 6)
+          if (tail === 'left') ctx.fillRect(pts[0][0] - 3, pts[0][1] + 3, 6, pts[2][1] - pts[0][1] - 6)
+          if (tail === 'right') ctx.fillRect(pts[0][0] - 3, pts[0][1] + 3, 6, pts[2][1] - pts[0][1] - 6)
           ctx.restore()
         }
       }
@@ -106,12 +121,12 @@ export default function SketchBubble({
     <div
       ref={containerRef}
       className={`relative inline-block ${className}`}
-      style={{ margin: tail !== 'none' ? 20 : 0 }}
+      style={{ margin: tail !== 'none' ? 22 : 4 }}
     >
       <canvas ref={canvasRef} className="absolute pointer-events-none" />
       <div
-        className="relative z-10 px-4 py-3 font-hand text-slate-800"
-        style={{ opacity: ready ? 1 : 0, transition: 'opacity 300ms ease-in' }}
+        className="relative z-10 px-4 py-2.5 font-hand text-slate-800"
+        style={{ opacity: ready ? 1 : 0, transition: 'opacity 250ms ease-in' }}
       >
         {children}
       </div>

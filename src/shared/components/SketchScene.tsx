@@ -89,15 +89,15 @@ function SketchTitle({ text, color = '#1e293b' }: { text: string; color?: string
   }, [text, color])
 
   return (
-    <div className="flex flex-col items-center mb-6">
+    <div className="flex flex-col items-center mb-8">
       <h2
         ref={ref}
-        className="font-hand text-3xl font-bold tracking-tight"
-        style={{ color }}
+        className="text-4xl md:text-5xl font-black tracking-tight uppercase"
+        style={{ color, fontFamily: "'Arial Black', 'Helvetica Neue', sans-serif" }}
       >
         {text}
       </h2>
-      <canvas ref={canvasRef} className="mt-0.5" />
+      <canvas ref={canvasRef} className="mt-1" />
     </div>
   )
 }
