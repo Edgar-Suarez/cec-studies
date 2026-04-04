@@ -155,11 +155,8 @@ export default function InfografiaCreativa({ cards }: { cards: InfoCard[] }) {
 
   return (
     <div
-      className="mb-5 rounded-2xl bg-amber-50/30 border border-amber-200/40 shadow-sm px-5 py-6 overflow-x-auto"
-      style={{
-        backgroundImage:
-          'url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' viewBox=\'0 0 6 6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23d4a574\' fill-opacity=\'0.06\'%3E%3Cpath d=\'M5 0h1L0 5v1zM6 5v1H5z\'/%3E%3C/g%3E%3C/svg%3E")',
-      }}
+      className="mb-5 rounded-2xl px-5 py-6 overflow-x-auto"
+      style={{ background: '#fdfbf7' }}
     >
       <div className="flex gap-4 min-w-max items-stretch">
         {cards.map((card, i) => {

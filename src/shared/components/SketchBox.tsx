@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { annotate } from 'rough-notation'
 import type { RoughAnnotationType } from 'rough-notation/lib/model'
 
@@ -23,33 +23,47 @@ export default function SketchBox({
   strokeWidth = 2,
   padding = 8,
   animate = true,
-  animationDuration = 600,
+  animationDuration = 1000,
 }: SketchBoxProps) {
   const ref = useRef<HTMLSpanElement>(null)
   const annotationRef = useRef<ReturnType<typeof annotate> | null>(null)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    if (!ref.current) return
+    const el = ref.current
+    if (!el) return
 
-    annotationRef.current = annotate(ref.current, {
-      type,
-      color,
-      multiline,
-      strokeWidth,
-      padding,
-      animate,
-      animationDuration,
-    })
+    // Small delay to ensure DOM is painted before rough-notation measures
+    const timer = setTimeout(() => {
+      annotationRef.current = annotate(el, {
+        type,
+        color,
+        multiline,
+        strokeWidth,
+        padding,
+        animate,
+        animationDuration,
+      })
 
-    annotationRef.current.show()
+      annotationRef.current.show()
+      setVisible(true)
+    }, 50)
 
     return () => {
+      clearTimeout(timer)
       annotationRef.current?.remove()
     }
   }, [type, color, multiline, strokeWidth, padding, animate, animationDuration])
 
   return (
-    <span ref={ref} className="font-hand">
+    <span
+      ref={ref}
+      className="inline-block font-hand"
+      style={{
+        opacity: visible ? 1 : 0,
+        transition: 'opacity 300ms ease-in',
+      }}
+    >
       {children}
     </span>
   )
