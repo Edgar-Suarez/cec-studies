@@ -4,6 +4,7 @@ import { section4Guide } from './studyGuide-section04'
 import { section6Guide } from './studyGuide-section06'
 import { section8Guide } from './studyGuide-section08'
 import { section10Guide } from './studyGuide-section10'
+import { section12Guide } from './studyGuide-section12'
 
 export const studyGuideSections: StudyGuideSection[] = [
   section2Guide,
@@ -11,4 +12,5 @@ export const studyGuideSections: StudyGuideSection[] = [
   section6Guide,
   section8Guide,
   section10Guide,
+  section12Guide,
 ]
