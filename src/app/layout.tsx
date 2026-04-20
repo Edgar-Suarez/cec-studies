@@ -1,6 +1,26 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { Inter, JetBrains_Mono, Caveat } from 'next/font/google'
 import './globals.css'
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+})
+
+const caveat = Caveat({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-hand',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'CEC Study Trainer',
@@ -128,12 +148,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="en" className={`dark ${inter.variable} ${jetbrainsMono.variable} ${caveat.variable}`}>
       <body className="bg-gray-950 text-gray-100 min-h-screen">
         <SideNav />
         <main className="md:ml-56 pb-20 md:pb-0 min-h-screen">
