@@ -1,0 +1,80 @@
+{
+  "name": "generate_questions",
+  "description": "Return 1-3 multiple-choice questions generated strictly from the CEC rule provided by the user. Every question must have exactly 4 options, a correctAnswer index 0-3, an explanation that cites the ruleReference literally, and a ruleReference that matches the ruleNumber the user provided. If the rule is unworkable, return a single object whose question starts with 'SKIP:'.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "questions": {
+        "type": "array",
+        "minItems": 1,
+        "maxItems": 3,
+        "items": {
+          "type": "object",
+          "properties": {
+            "question": {
+              "type": "string",
+              "description": "The question stem. Complete sentence. 10-500 chars. May start with 'SKIP:' if the rule is unworkable."
+            },
+            "options": {
+              "type": "array",
+              "description": "Exactly 4 mutually-exclusive options, one correct, three plausible distractors.",
+              "minItems": 4,
+              "maxItems": 4,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              }
+            },
+            "correctAnswer": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3,
+              "description": "0-indexed position of the correct option in the options array."
+            },
+            "explanation": {
+              "type": "string",
+              "minLength": 20,
+              "maxLength": 2000,
+              "description": "Must include the literal string 'Rule X-YYY' matching ruleReference. Quote/paraphrase the rule text and explain why the answer is correct."
+            },
+            "ruleReference": {
+              "type": "string",
+              "pattern": "^Rule \\d+-\\d+$",
+              "description": "Formatted as 'Rule X-YYY'. Must exactly match the ruleNumber provided by the user."
+            },
+            "ruleComplexity": {
+              "type": "string",
+              "enum": ["simple", "complex"],
+              "description": "Your final assessment of the rule complexity."
+            },
+            "tags": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 5,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 50,
+                "pattern": "^[a-z0-9-]+$"
+              },
+              "description": "Lowercase tags. MUST include 'rule-X-YYY' (lowercase, no word 'rule')."
+            }
+          },
+          "required": [
+            "question",
+            "options",
+            "correctAnswer",
+            "explanation",
+            "ruleReference",
+            "ruleComplexity",
+            "tags"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": ["questions"],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,16 @@
+export const SECTION_TITLES: Record<string, string> = {
+  '2': 'General Rules',
+  '4': 'Conductors',
+  '6': 'Services and Service Equipment',
+  '8': 'Circuit Loading and Demand Factors',
+  '10': 'Grounding and Bonding',
+  '12': 'Wiring Methods',
+  '14': 'Protection and Control',
+  '16': 'Class 1 and Class 2 Circuits',
+  '18': 'Hazardous Locations',
+  '20': 'Flammable Liquids',
+  '22': 'Categories of Equipment',
+  '24': 'Patient Care Areas',
+  '26': 'Installation of Equipment',
+  '28': 'Motors and Generators',
+}

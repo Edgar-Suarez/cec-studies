@@ -8,6 +8,8 @@ export interface Question {
   explanation: string
   difficulty: 'easy' | 'medium' | 'hard'
   tags: string[]
+  ruleReference?: string
+  ruleComplexity?: 'simple' | 'complex'
 }
 
 export interface QuizSession {
