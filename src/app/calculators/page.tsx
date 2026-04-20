@@ -12,73 +12,11 @@ import {
   type AmpacityCorrectionParams,
   type MotorProtectionParams,
 } from '../../lib/calculators'
+import { Button, Card, Input } from '@/shared/components/ui'
 
 type Tab = 'demand' | 'vdrop' | 'ampacity' | 'motor'
 
-function TabButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean
-  onClick: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-        active
-          ? 'bg-blue-600 text-white'
-          : 'text-gray-400 hover:text-white hover:bg-gray-800'
-      }`}
-    >
-      {children}
-    </button>
-  )
-}
-
-function InputField({
-  label,
-  value,
-  onChange,
-  type = 'number',
-  min,
-  max,
-  step,
-  unit,
-  hint,
-}: {
-  label: string
-  value: string | number
-  onChange: (v: string) => void
-  type?: string
-  min?: number
-  max?: number
-  step?: number
-  unit?: string
-  hint?: string
-}) {
-  return (
-    <div>
-      <label className="block text-gray-300 text-sm font-medium mb-1">
-        {label}
-        {unit && <span className="text-gray-500 ml-1">({unit})</span>}
-      </label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        min={min}
-        max={max}
-        step={step}
-        className="w-full bg-gray-800 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-colors"
-      />
-      {hint && <div className="text-gray-500 text-xs mt-1">{hint}</div>}
-    </div>
-  )
-}
-
+// Retokenized native <select>. Stays local until Fase 3 creates a <Select> primitive.
 function SelectField({
   label,
   value,
@@ -91,12 +29,12 @@ function SelectField({
   options: { value: string; label: string }[]
 }) {
   return (
-    <div>
-      <label className="block text-gray-300 text-sm font-medium mb-1">{label}</label>
+    <div className="flex flex-col gap-1">
+      <label className="text-sm font-medium text-secondary">{label}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-gray-800 border border-gray-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+        className="h-12 bg-surface-base border border-subtle text-primary rounded-md px-3 text-base outline-none focus:border-strong transition-colors duration-75"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -105,6 +43,46 @@ function SelectField({
         ))}
       </select>
     </div>
+  )
+}
+
+function Toggle({
+  label,
+  checked,
+  onToggle,
+}: {
+  label: string
+  checked: boolean
+  onToggle: () => void
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <label className="text-primary text-sm font-medium">{label}</label>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={onToggle}
+        className={`w-10 h-5 rounded-pill transition-colors duration-75 ${
+          checked ? 'bg-accent' : 'bg-surface-elevated-2'
+        }`}
+      >
+        <div
+          className={`w-4 h-4 bg-primary rounded-pill transition-all m-0.5 ${
+            checked ? 'translate-x-5' : 'translate-x-0'
+          }`}
+        />
+      </button>
+    </div>
+  )
+}
+
+function RuleChip({ rule, children }: { rule: string; children: React.ReactNode }) {
+  return (
+    <Card elevation="elev-1" padding="sm">
+      <div className="text-accent text-xs font-mono font-semibold">{rule}</div>
+      <div className="text-secondary text-xs mt-1 leading-relaxed">{children}</div>
+    </Card>
   )
 }
 
@@ -121,17 +99,25 @@ function ResultRow({
 }) {
   return (
     <div
-      className={`flex items-center justify-between py-2.5 px-3 rounded-lg ${
-        highlight ? 'bg-blue-600/20 border border-blue-500/40' : 'bg-gray-800/50'
+      className={`flex items-center justify-between py-2.5 px-3 rounded-md ${
+        highlight ? 'bg-surface-elevated-2 border border-subtle' : 'bg-surface-elevated'
       }`}
     >
       <div>
-        <div className={`text-sm font-medium ${highlight ? 'text-blue-300' : 'text-gray-300'}`}>
+        <div
+          className={`text-sm font-medium ${
+            highlight ? 'text-accent' : 'text-primary'
+          }`}
+        >
           {item}
         </div>
-        {rule && <div className="text-gray-500 text-xs">{rule}</div>}
+        {rule ? <div className="text-muted text-xs mt-0.5">{rule}</div> : null}
       </div>
-      <div className={`font-bold tabular-nums ${highlight ? 'text-blue-300 text-base' : 'text-white text-sm'}`}>
+      <div
+        className={`font-mono font-bold ${
+          highlight ? 'text-accent text-base' : 'text-primary text-sm'
+        }`}
+      >
         {value}
       </div>
     </div>
@@ -170,113 +156,93 @@ function ResidentialDemandCalc() {
   return (
     <div className="grid md:grid-cols-2 gap-6">
       <div className="space-y-4">
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3">
-          <div className="text-blue-400 text-xs font-semibold">CEC Rule 8-200</div>
-          <div className="text-gray-300 text-xs mt-1">
-            Basic load: 45 VA/m² · Demand factors: 100% (first 1kW), 75% (1-10kW), 40% (over 10kW)
-          </div>
-        </div>
+        <RuleChip rule="CEC Rule 8-200">
+          Basic load: 45 VA/m² · Demand factors: 100% (first 1 kW), 75% (1–10 kW), 40% (over 10 kW)
+        </RuleChip>
 
-        <InputField
+        <Input
           label="Habitable Floor Area"
-          value={floorArea}
-          onChange={setFloorArea}
-          unit="m²"
+          type="number"
           min={0}
+          unit="m²"
+          value={floorArea}
+          onChange={(e) => setFloorArea(e.target.value)}
           hint="Total heated floor area (not including garage/basement if unfinished)"
         />
-        <InputField
+        <Input
           label="Small Appliance Circuits"
-          value={smallApp}
-          onChange={setSmallApp}
+          type="number"
           min={2}
-          hint="Minimum 2 required per Rule 8-210 (1500W each)"
+          value={smallApp}
+          onChange={(e) => setSmallApp(e.target.value)}
+          hint="Minimum 2 required per Rule 8-210 (1500 W each)"
         />
 
-        <div className="border border-gray-700 rounded-xl p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-gray-300 text-sm font-medium">Electric Range</label>
-            <button
-              onClick={() => setHasRange(!hasRange)}
-              className={`w-10 h-5 rounded-full transition-all ${hasRange ? 'bg-blue-600' : 'bg-gray-700'}`}
-            >
-              <div className={`w-4 h-4 bg-white rounded-full transition-all m-0.5 ${hasRange ? 'translate-x-5' : 'translate-x-0'}`} />
-            </button>
-          </div>
-          {hasRange && (
-            <InputField
+        <Card elevation="elev-1" padding="md" className="space-y-3">
+          <Toggle label="Electric Range" checked={hasRange} onToggle={() => setHasRange(!hasRange)} />
+          {hasRange ? (
+            <Input
               label="Range Rating"
+              type="number"
+              min={0}
+              unit="W"
               value={rangeRating}
-              onChange={setRangeRating}
-              unit="watts"
-              min={0}
-              hint="Typical: 8000-14400W. Demand factor: 80% for ≤10kW, 8kW for ≤12.5kW"
+              onChange={(e) => setRangeRating(e.target.value)}
+              hint="Typical: 8000–14 400 W. Demand factor: 80% for ≤10 kW, 8 kW for ≤12.5 kW"
             />
-          )}
-        </div>
+          ) : null}
+        </Card>
 
-        <div className="border border-gray-700 rounded-xl p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-gray-300 text-sm font-medium">Electric Dryer</label>
-            <button
-              onClick={() => setHasDryer(!hasDryer)}
-              className={`w-10 h-5 rounded-full transition-all ${hasDryer ? 'bg-blue-600' : 'bg-gray-700'}`}
-            >
-              <div className={`w-4 h-4 bg-white rounded-full transition-all m-0.5 ${hasDryer ? 'translate-x-5' : 'translate-x-0'}`} />
-            </button>
-          </div>
-          {hasDryer && (
-            <InputField
+        <Card elevation="elev-1" padding="md" className="space-y-3">
+          <Toggle label="Electric Dryer" checked={hasDryer} onToggle={() => setHasDryer(!hasDryer)} />
+          {hasDryer ? (
+            <Input
               label="Dryer Rating"
-              value={dryerRating}
-              onChange={setDryerRating}
-              unit="watts"
+              type="number"
               min={5000}
-              hint="Minimum 5000W per CEC Rule 8-200"
+              unit="W"
+              value={dryerRating}
+              onChange={(e) => setDryerRating(e.target.value)}
+              hint="Minimum 5000 W per CEC Rule 8-200"
             />
-          )}
-        </div>
+          ) : null}
+        </Card>
 
-        <div className="border border-gray-700 rounded-xl p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-gray-300 text-sm font-medium">Electric HVAC</label>
-            <button
-              onClick={() => setHasHVAC(!hasHVAC)}
-              className={`w-10 h-5 rounded-full transition-all ${hasHVAC ? 'bg-blue-600' : 'bg-gray-700'}`}
-            >
-              <div className={`w-4 h-4 bg-white rounded-full transition-all m-0.5 ${hasHVAC ? 'translate-x-5' : 'translate-x-0'}`} />
-            </button>
-          </div>
-          {hasHVAC && (
-            <InputField
+        <Card elevation="elev-1" padding="md" className="space-y-3">
+          <Toggle label="Electric HVAC" checked={hasHVAC} onToggle={() => setHasHVAC(!hasHVAC)} />
+          {hasHVAC ? (
+            <Input
               label="HVAC Rating (larger of heating or cooling)"
-              value={hvacRating}
-              onChange={setHvacRating}
-              unit="watts"
+              type="number"
               min={0}
+              unit="W"
+              value={hvacRating}
+              onChange={(e) => setHvacRating(e.target.value)}
               hint="Only the larger of heating or cooling per Rule 8-200"
             />
-          )}
-        </div>
+          ) : null}
+        </Card>
 
-        <button
-          onClick={calculate}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all"
-        >
+        <Button variant="primary" size="lg" className="w-full" onClick={calculate}>
           Calculate Service Load
-        </button>
+        </Button>
       </div>
 
-      {result && (
+      {result ? (
         <div className="space-y-3">
-          <h3 className="text-white font-semibold">Results</h3>
+          <h3 className="text-primary font-display font-semibold">Results</h3>
           <div className="space-y-1.5">
             {result.breakdown.map((row, i) => (
-              <div key={i} className="flex justify-between text-sm py-1.5 border-b border-gray-800">
-                <span className="text-gray-400 pr-2">{row.item}</span>
+              <div
+                key={i}
+                className="flex justify-between text-sm py-1.5 border-b border-subtle"
+              >
+                <span className="text-secondary pr-2">{row.item}</span>
                 <div className="text-right shrink-0">
-                  <div className="text-white font-medium">{(row.watts / 1000).toFixed(2)} kW</div>
-                  <div className="text-gray-500 text-xs">{row.demandFactor}</div>
+                  <div className="text-primary font-mono font-medium">
+                    {(row.watts / 1000).toFixed(2)} kW
+                  </div>
+                  <div className="text-muted text-xs">{row.demandFactor}</div>
                 </div>
               </div>
             ))}
@@ -287,18 +253,18 @@ function ResidentialDemandCalc() {
               value={`${(result.totalDemand / 1000).toFixed(2)} kW`}
             />
             <ResultRow
-              item="Required Service Current (240V)"
+              item="Required Service Current (240 V)"
               value={`${result.serviceAmps.toFixed(1)} A`}
             />
             <ResultRow
               item="Recommended Service Size"
               value={`${result.recommendedService} A`}
               highlight
-              rule="Rule 8-202: Min 100A for dwellings ≥60m²"
+              rule="Rule 8-202: Min 100 A for dwellings ≥60 m²"
             />
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
@@ -332,16 +298,16 @@ function VoltageDropCalc() {
     setResult(calculateVoltageDrop(params))
   }
 
+  const vdPct = result?.voltageDropPercent ?? 0
+  const vdTone = vdPct <= 3 ? 'bg-success' : vdPct <= 5 ? 'bg-warning' : 'bg-danger'
+
   return (
     <div className="grid md:grid-cols-2 gap-6">
       <div className="space-y-4">
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3">
-          <div className="text-blue-400 text-xs font-semibold">CEC Rule 8-102</div>
-          <div className="text-gray-300 text-xs mt-1">
-            Single-phase: VD = 2 × I × R × L · Three-phase: VD = √3 × I × R × L
-            · Max 3% branch circuit, 5% total
-          </div>
-        </div>
+        <RuleChip rule="CEC Rule 8-102">
+          Single-phase: VD = 2 × I × R × L · Three-phase: VD = √3 × I × R × L · Max 3%
+          branch circuit, 5% total
+        </RuleChip>
 
         <SelectField
           label="System Voltage"
@@ -351,7 +317,7 @@ function VoltageDropCalc() {
             { value: '120', label: '120 V (1-phase L-N)' },
             { value: '240', label: '240 V (1-phase L-L)' },
             { value: '208', label: '208 V (3-phase L-L)' },
-            { value: '347', label: '347 V (1-phase L-N from 600V)' },
+            { value: '347', label: '347 V (1-phase L-N from 600 V)' },
             { value: '480', label: '480 V (3-phase L-L)' },
             { value: '600', label: '600 V (3-phase L-L)' },
           ]}
@@ -365,19 +331,21 @@ function VoltageDropCalc() {
             { value: '3', label: 'Three-phase' },
           ]}
         />
-        <InputField
+        <Input
           label="Load Current"
+          type="number"
+          min={0}
+          unit="A"
           value={current}
-          onChange={setCurrent}
-          unit="amps"
-          min={0}
+          onChange={(e) => setCurrent(e.target.value)}
         />
-        <InputField
+        <Input
           label="One-Way Circuit Length"
-          value={length}
-          onChange={setLength}
-          unit="metres"
+          type="number"
           min={0}
+          unit="m"
+          value={length}
+          onChange={(e) => setLength(e.target.value)}
           hint="Length from panel to load (one-way only)"
         />
         <SelectField
@@ -396,17 +364,14 @@ function VoltageDropCalc() {
           options={wireSizeOptions}
         />
 
-        <button
-          onClick={calculate}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all"
-        >
+        <Button variant="primary" size="lg" className="w-full" onClick={calculate}>
           Calculate Voltage Drop
-        </button>
+        </Button>
       </div>
 
-      {result && (
+      {result ? (
         <div className="space-y-3">
-          <h3 className="text-white font-semibold">Results</h3>
+          <h3 className="text-primary font-display font-semibold">Results</h3>
           <div className="space-y-2">
             <ResultRow item="Voltage Drop" value={`${result.voltageDrop} V`} />
             <ResultRow
@@ -416,40 +381,43 @@ function VoltageDropCalc() {
             />
             <ResultRow item="Receiving End Voltage" value={`${result.receivingVoltage} V`} />
             <div
-              className={`flex items-center gap-2 p-3 rounded-xl border text-sm font-medium ${
-                result.isWithinCode
-                  ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                  : 'bg-red-500/10 border-red-500/30 text-red-400'
+              className={`flex items-center gap-2 p-3 rounded-md bg-surface-elevated text-sm font-medium ${
+                result.isWithinCode ? 'text-success' : 'text-danger'
               }`}
             >
               {result.isWithinCode ? '✓ Within Code (≤3%)' : '✗ Exceeds 3% Limit'}
             </div>
           </div>
-          <div className="bg-gray-800 rounded-xl p-3 text-sm text-gray-300 leading-relaxed">
+          <Card elevation="elev-1" padding="sm" className="text-sm text-secondary leading-relaxed">
             {result.recommendation}
-          </div>
+          </Card>
 
-          {/* Visual gauge */}
+          {/* Semantic gauge — 3 discrete zones (success / warning / danger) */}
           <div>
-            <div className="flex justify-between text-xs text-gray-500 mb-1">
-              <span>0%</span>
-              <span className="text-green-400">3% limit</span>
-              <span className="text-red-400">5% limit</span>
+            <div className="flex justify-between text-xs mb-1 font-mono">
+              <span className="text-muted">0%</span>
+              <span className="text-success">3% limit</span>
+              <span className="text-danger">5% limit</span>
             </div>
-            <div className="relative h-4 bg-gray-800 rounded-full overflow-hidden">
-              <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 opacity-20 w-full" />
+            <div className="relative h-4 bg-surface-elevated-2 rounded-pill overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all ${
-                  result.voltageDropPercent <= 3 ? 'bg-green-500' : result.voltageDropPercent <= 5 ? 'bg-yellow-500' : 'bg-red-500'
-                }`}
-                style={{ width: `${Math.min((result.voltageDropPercent / 6) * 100, 100)}%` }}
+                className={`h-full rounded-pill transition-all duration-300 ${vdTone}`}
+                style={{ width: `${Math.min((vdPct / 6) * 100, 100)}%` }}
               />
-              <div className="absolute top-0 h-full w-px bg-green-400" style={{ left: '50%' }} />
-              <div className="absolute top-0 h-full w-px bg-red-400" style={{ left: '83.3%' }} />
+              <div
+                className="absolute top-0 h-full w-px bg-success"
+                style={{ left: '50%' }}
+                aria-hidden="true"
+              />
+              <div
+                className="absolute top-0 h-full w-px bg-danger"
+                style={{ left: '83.3%' }}
+                aria-hidden="true"
+              />
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
@@ -477,20 +445,18 @@ function AmpacityCorrectionCalc() {
   return (
     <div className="grid md:grid-cols-2 gap-6">
       <div className="space-y-4">
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3">
-          <div className="text-blue-400 text-xs font-semibold">CEC Tables 5A & 5C</div>
-          <div className="text-gray-300 text-xs mt-1">
-            Corrected ampacity = Base × Temperature Factor (Table 5A) × Bundling Factor (Table 5C).
-            Base ambient temperature: 30°C.
-          </div>
-        </div>
+        <RuleChip rule="CEC Tables 5A & 5C">
+          Corrected ampacity = Base × Temperature Factor (Table 5A) × Bundling Factor (Table 5C).
+          Base ambient temperature: 30°C.
+        </RuleChip>
 
-        <InputField
+        <Input
           label="Base Ampacity (from Table 1 or 2)"
-          value={baseAmpacity}
-          onChange={setBaseAmpacity}
-          unit="amps"
+          type="number"
           min={0}
+          unit="A"
+          value={baseAmpacity}
+          onChange={(e) => setBaseAmpacity(e.target.value)}
           hint="From CEC Table 1 (copper) or Table 2 (aluminum)"
         />
         <SelectField
@@ -505,71 +471,83 @@ function AmpacityCorrectionCalc() {
             { value: 'T60', label: 'T60 — 60°C rated' },
           ]}
         />
-        <InputField
+        <Input
           label="Ambient Temperature"
-          value={ambientTemp}
-          onChange={setAmbientTemp}
-          unit="°C"
+          type="number"
           min={10}
           max={80}
+          unit="°C"
+          value={ambientTemp}
+          onChange={(e) => setAmbientTemp(e.target.value)}
           hint="Actual temperature at installation location (base = 30°C)"
         />
-        <InputField
+        <Input
           label="Number of Current-Carrying Conductors"
-          value={numConductors}
-          onChange={setNumConductors}
+          type="number"
           min={1}
+          value={numConductors}
+          onChange={(e) => setNumConductors(e.target.value)}
           hint="Do not count grounding conductors. No derating if ≤3."
         />
 
-        <button
-          onClick={calculate}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all"
-        >
+        <Button variant="primary" size="lg" className="w-full" onClick={calculate}>
           Calculate Corrected Ampacity
-        </button>
+        </Button>
 
-        <div className="bg-gray-900 border border-gray-700 rounded-xl p-3">
-          <div className="text-gray-400 text-xs font-medium mb-2">Table 5C Bundling Factors</div>
+        <Card elevation="elev-1" padding="sm">
+          <div className="text-secondary text-xs font-medium mb-2">
+            Table 5C Bundling Factors
+          </div>
           <div className="grid grid-cols-4 gap-1 text-xs">
             {[
-              ['1-3', '1.00'],
-              ['4-6', '0.80'],
-              ['7-9', '0.70'],
-              ['10-20', '0.50'],
+              ['1–3', '1.00'],
+              ['4–6', '0.80'],
+              ['7–9', '0.70'],
+              ['10–20', '0.50'],
             ].map(([range, factor]) => (
-              <div key={range} className="bg-gray-800 rounded p-1.5 text-center">
-                <div className="text-gray-300 font-medium">{range}</div>
-                <div className="text-blue-400">{factor}</div>
+              <div
+                key={range}
+                className="bg-surface-elevated-2 rounded-sm p-1.5 text-center"
+              >
+                <div className="text-primary font-medium">{range}</div>
+                <div className="text-accent font-mono">{factor}</div>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </div>
 
-      {result && (
+      {result ? (
         <div className="space-y-3">
-          <h3 className="text-white font-semibold">Results</h3>
+          <h3 className="text-primary font-display font-semibold">Results</h3>
           <div className="space-y-2">
             {result.breakdown.map((row, i) => (
               <ResultRow
                 key={i}
                 item={row.factor}
-                value={typeof row.value === 'number' ? (Number.isInteger(row.value) ? `${row.value} A` : row.value.toFixed(2)) : `${row.value} A`}
+                value={
+                  typeof row.value === 'number'
+                    ? Number.isInteger(row.value)
+                      ? `${row.value} A`
+                      : row.value.toFixed(2)
+                    : `${row.value} A`
+                }
                 highlight={i === result.breakdown.length - 1}
               />
             ))}
           </div>
-          <div className="bg-gray-800 rounded-xl p-3">
-            <div className="text-gray-400 text-xs mb-1">Insulation Rating</div>
-            <div className="text-white font-medium">{result.insulation}</div>
-          </div>
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-sm text-blue-300">
-            Use the corrected ampacity to select the appropriate overcurrent protection device.
-            The OCPD must not exceed the corrected ampacity.
-          </div>
+          <Card elevation="elev-1" padding="sm">
+            <div className="text-muted text-xs mb-1">Insulation Rating</div>
+            <div className="text-primary font-mono font-medium">{result.insulation}</div>
+          </Card>
+          <Card elevation="elev-1" padding="sm">
+            <div className="text-sm text-accent leading-relaxed">
+              Use the corrected ampacity to select the appropriate overcurrent protection device.
+              The OCPD must not exceed the corrected ampacity.
+            </div>
+          </Card>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
@@ -598,13 +576,10 @@ function MotorProtectionCalc() {
   return (
     <div className="grid md:grid-cols-2 gap-6">
       <div className="space-y-4">
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3">
-          <div className="text-blue-400 text-xs font-semibold">CEC Section 28</div>
-          <div className="text-gray-300 text-xs mt-1">
-            Conductors: 125% FLA (Rule 28-304) · OCPD: 250% FLA for CB (Rule 28-200)
-            · Disconnect: 115% FLA (Rule 28-600) · Overload: 125% FLA (Rule 28-302)
-          </div>
-        </div>
+        <RuleChip rule="CEC Section 28">
+          Conductors: 125% FLA (Rule 28-304) · OCPD: 250% FLA for CB (Rule 28-200) · Disconnect:
+          115% FLA (Rule 28-600) · Overload: 125% FLA (Rule 28-302)
+        </RuleChip>
 
         <SelectField
           label="Motor Horsepower"
@@ -646,37 +621,34 @@ function MotorProtectionCalc() {
           ]}
         />
 
-        <button
-          onClick={calculate}
-          className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all"
-        >
+        <Button variant="primary" size="lg" className="w-full" onClick={calculate}>
           Calculate Motor Protection
-        </button>
+        </Button>
       </div>
 
-      {result && (
+      {result ? (
         <div className="space-y-2">
-          <h3 className="text-white font-semibold">Motor Protection Schedule</h3>
+          <h3 className="text-primary font-display font-semibold">Motor Protection Schedule</h3>
           {result.breakdown.map((row, i) => (
             <div
               key={i}
-              className="flex items-start justify-between py-2 px-3 rounded-lg bg-gray-800/50 gap-2"
+              className="flex items-start justify-between py-2 px-3 rounded-md bg-surface-elevated gap-2"
             >
               <div className="min-w-0">
-                <div className="text-gray-300 text-sm font-medium">{row.item}</div>
-                <div className="text-gray-500 text-xs">{row.rule}</div>
+                <div className="text-primary text-sm font-medium">{row.item}</div>
+                <div className="text-muted text-xs">{row.rule}</div>
               </div>
-              <div className="text-white font-semibold text-sm shrink-0 text-right">
+              <div className="text-primary font-mono font-semibold text-sm shrink-0 text-right">
                 {String(row.value)}
               </div>
             </div>
           ))}
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 text-sm text-yellow-300 mt-2">
-            Note: If motor does not start with the calculated OCPD size, the next higher
-            standard size may be used per CEC Rule 28-200.
+          <div className="rounded-md bg-surface-elevated p-3 text-sm text-warning mt-2 border border-subtle">
+            Note: If motor does not start with the calculated OCPD size, the next higher standard
+            size may be used per CEC Rule 28-200.
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
@@ -697,37 +669,48 @@ export default function CalculatorsPage() {
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/" className="text-gray-400 hover:text-white">
+        <Link
+          href="/"
+          className="text-secondary hover:text-primary transition-colors duration-75"
+          aria-label="Back to dashboard"
+        >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-white">CEC Calculators</h1>
-          <p className="text-gray-400 text-sm">Canadian Electrical Code formulas</p>
+          <h1 className="text-2xl font-display font-bold text-primary">CEC Calculators</h1>
+          <p className="text-secondary text-sm">Canadian Electrical Code formulas</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-900 border border-gray-700 rounded-xl p-1 mb-6 overflow-x-auto">
+      <Card elevation="elev-1" padding="sm" className="flex gap-1 mb-6 overflow-x-auto">
         {tabs.map((tab) => (
-          <TabButton
+          <Button
             key={tab.id}
-            active={activeTab === tab.id}
+            variant={activeTab === tab.id ? 'primary' : 'ghost'}
+            size="sm"
             onClick={() => setActiveTab(tab.id)}
+            className="whitespace-nowrap"
           >
             {tab.label}
-          </TabButton>
+          </Button>
         ))}
-      </div>
+      </Card>
 
       {/* Tab content */}
-      <div className="bg-gray-900 border border-gray-700 rounded-xl p-5">
-        {activeTab === 'demand' && <ResidentialDemandCalc />}
-        {activeTab === 'vdrop' && <VoltageDropCalc />}
-        {activeTab === 'ampacity' && <AmpacityCorrectionCalc />}
-        {activeTab === 'motor' && <MotorProtectionCalc />}
-      </div>
+      <Card elevation="elev-1" padding="lg">
+        {activeTab === 'demand' ? <ResidentialDemandCalc /> : null}
+        {activeTab === 'vdrop' ? <VoltageDropCalc /> : null}
+        {activeTab === 'ampacity' ? <AmpacityCorrectionCalc /> : null}
+        {activeTab === 'motor' ? <MotorProtectionCalc /> : null}
+      </Card>
     </div>
   )
 }

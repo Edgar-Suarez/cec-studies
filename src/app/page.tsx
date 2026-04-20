@@ -5,53 +5,21 @@ import Link from 'next/link'
 import { loadProgress, getWeaknesses, getDueFlashcards } from '../lib/storage'
 import type { UserProgress, WeaknessData, QuizSession } from '../lib/types'
 import { questions } from '../data/questions'
+import { Card } from '@/shared/components/ui'
 
-function StatCard({
-  label,
-  value,
-  sub,
-  color = 'blue',
-}: {
-  label: string
-  value: string | number
-  sub?: string
-  color?: 'blue' | 'green' | 'yellow' | 'purple'
-}) {
-  const colorMap = {
-    blue: 'from-blue-600/20 to-blue-500/10 border-blue-500/30 text-blue-400',
-    green: 'from-green-600/20 to-green-500/10 border-green-500/30 text-green-400',
-    yellow: 'from-yellow-600/20 to-yellow-500/10 border-yellow-500/30 text-yellow-400',
-    purple: 'from-purple-600/20 to-purple-500/10 border-purple-500/30 text-purple-400',
-  }
-
-  return (
-    <div
-      className={`bg-gradient-to-br ${colorMap[color]} border rounded-xl p-4 flex flex-col gap-1`}
-    >
-      <span className="text-gray-400 text-xs font-medium uppercase tracking-wider">
-        {label}
-      </span>
-      <span className={`text-3xl font-bold ${colorMap[color].split(' ').pop()}`}>
-        {value}
-      </span>
-      {sub && <span className="text-gray-500 text-xs">{sub}</span>}
-    </div>
-  )
-}
-
-function AccuracyBar({ accuracy, section }: { accuracy: number; section: string }) {
-  const color =
-    accuracy < 40 ? 'bg-red-500' : accuracy < 70 ? 'bg-yellow-500' : 'bg-green-500'
+function AccuracyBar({ accuracy }: { accuracy: number }) {
+  const fill =
+    accuracy < 40 ? 'bg-danger' : accuracy < 70 ? 'bg-warning' : 'bg-success'
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex-1 bg-gray-800 rounded-full h-2 overflow-hidden">
+      <div className="flex-1 bg-surface-elevated-2 rounded-pill h-2 overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${color}`}
+          className={`h-full rounded-pill transition-all duration-500 ${fill}`}
           style={{ width: `${accuracy}%` }}
         />
       </div>
-      <span className="text-gray-400 text-sm w-10 text-right">{accuracy}%</span>
+      <span className="text-secondary text-sm w-10 text-right font-mono">{accuracy}%</span>
     </div>
   )
 }
@@ -74,6 +42,64 @@ function formatDate(dateStr: string): string {
     return dateStr
   }
 }
+
+type StatCardContent = {
+  label: string
+  value: string | number
+  sub?: string
+}
+
+function StatCardContent({ label, value, sub }: StatCardContent) {
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-secondary text-xs font-medium uppercase tracking-wider">
+        {label}
+      </span>
+      <span className="text-4xl font-mono text-primary">{value}</span>
+      {sub ? <span className="text-muted text-xs">{sub}</span> : null}
+    </div>
+  )
+}
+
+const quickActions: Array<{
+  href: string
+  emoji: string
+  title: string
+  subtitle: (args: { dueCount: number }) => string
+}> = [
+  {
+    href: '/quiz',
+    emoji: '📝',
+    title: 'Start Quiz',
+    subtitle: () => 'Practice or Exam mode',
+  },
+  {
+    href: '/flashcards',
+    emoji: '🃏',
+    title: 'Review Flashcards',
+    subtitle: ({ dueCount }) => `${dueCount} due today`,
+  },
+  {
+    href: '/calculators',
+    emoji: '🔢',
+    title: 'CEC Calculators',
+    subtitle: () => 'Demand, VD, Motors',
+  },
+]
+
+const coverageSections: Array<{ label: string; count: number }> = [
+  { label: 'Section 0 (Definitions)', count: 8 },
+  { label: 'Section 4 (Conductors)', count: 10 },
+  { label: 'Section 6 (Services)', count: 10 },
+  { label: 'Section 8 (Ampacity)', count: 20 },
+  { label: 'Section 10 (Grounding)', count: 10 },
+  { label: 'Section 12 (Wiring)', count: 8 },
+  { label: 'Section 14 (Protection)', count: 10 },
+  { label: 'Section 26 (Equipment)', count: 8 },
+  { label: 'Section 28 (Motors)', count: 16 },
+  { label: 'CEC Tables', count: 12 },
+  { label: "Ohm's Law & Power", count: 8 },
+]
 
 export default function Dashboard() {
   const [progress, setProgress] = useState<UserProgress | null>(null)
@@ -99,56 +125,69 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">CEC Study Trainer</h1>
-          <p className="text-gray-400 text-sm mt-1">Canadian Electrical Code — Exam Preparation</p>
+          <h1 className="text-2xl md:text-4xl font-display font-bold text-primary">
+            CEC Study Trainer
+          </h1>
+          <p className="text-secondary text-sm mt-1">
+            Canadian Electrical Code — Exam Preparation
+          </p>
         </div>
-        <div className="flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 rounded-xl px-3 py-2">
-          <span className="text-orange-400 text-lg">🔥</span>
+        <Card elevation="elev-1" padding="sm" className="flex items-center gap-2">
+          <span className="text-warning text-lg" aria-hidden="true">
+            🔥
+          </span>
           <div>
-            <div className="text-orange-400 font-bold text-lg leading-none">
+            <div className="text-warning font-mono font-bold text-lg leading-none">
               {progress?.streak ?? 0}
             </div>
-            <div className="text-orange-300/70 text-xs">day streak</div>
+            <div className="text-muted text-xs">day streak</div>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-        <StatCard
-          label="Questions Answered"
-          value={progress?.totalQuestionsAnswered ?? 0}
-          sub="total attempts"
-          color="blue"
-        />
-        <StatCard
-          label="Overall Accuracy"
-          value={`${accuracy}%`}
-          sub={`${progress?.totalCorrect ?? 0} correct`}
-          color="green"
-        />
-        <StatCard
-          label="Study Streak"
-          value={`${progress?.streak ?? 0}d`}
-          sub="consecutive days"
-          color="yellow"
-        />
-        <StatCard
-          label="Cards Due Today"
-          value={dueCount}
-          sub={`of ${questions.length} total`}
-          color="purple"
-        />
+        <Card elevation="elev-1" padding="md">
+          <StatCardContent
+            label="Questions Answered"
+            value={progress?.totalQuestionsAnswered ?? 0}
+            sub="total attempts"
+          />
+        </Card>
+        <Card elevation="elev-1" padding="md">
+          <StatCardContent
+            label="Overall Accuracy"
+            value={`${accuracy}%`}
+            sub={`${progress?.totalCorrect ?? 0} correct`}
+          />
+        </Card>
+        <Card elevation="elev-1" padding="md">
+          <StatCardContent
+            label="Study Streak"
+            value={`${progress?.streak ?? 0}d`}
+            sub="consecutive days"
+          />
+        </Card>
+        <Card elevation="elev-1" padding="md">
+          <StatCardContent
+            label="Cards Due Today"
+            value={dueCount}
+            sub={`of ${questions.length} total`}
+          />
+        </Card>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         {/* Weakness Chart */}
-        <div className="bg-gray-900 border border-gray-700 rounded-xl p-5">
-          <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
-            <span className="text-red-400">⚠</span> Weakest Sections
+        <Card elevation="elev-1" padding="lg">
+          <h2 className="text-primary font-display font-semibold mb-4 flex items-center gap-2">
+            <span className="text-danger" aria-hidden="true">
+              ⚠
+            </span>{' '}
+            Weakest Sections
           </h2>
           {weaknesses.length === 0 ? (
-            <div className="text-gray-500 text-sm text-center py-8">
+            <div className="text-muted text-sm text-center py-8">
               Answer at least 3 questions per section to see weakness data.
             </div>
           ) : (
@@ -156,55 +195,56 @@ export default function Dashboard() {
               {weaknesses.slice(0, 6).map((w) => (
                 <div key={w.section}>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-300 truncate pr-2">{w.sectionTitle}</span>
-                    <span className="text-gray-500 shrink-0">
+                    <span className="text-primary truncate pr-2">{w.sectionTitle}</span>
+                    <span className="text-muted shrink-0 font-mono">
                       {w.correctAttempts}/{w.totalAttempts}
                     </span>
                   </div>
-                  <AccuracyBar accuracy={w.accuracy} section={w.section} />
+                  <AccuracyBar accuracy={w.accuracy} />
                 </div>
               ))}
             </div>
           )}
-        </div>
+        </Card>
 
         {/* Recent Sessions */}
-        <div className="bg-gray-900 border border-gray-700 rounded-xl p-5">
-          <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
-            <span className="text-blue-400">📋</span> Recent Sessions
+        <Card elevation="elev-1" padding="lg">
+          <h2 className="text-primary font-display font-semibold mb-4 flex items-center gap-2">
+            <span className="text-accent" aria-hidden="true">
+              📋
+            </span>{' '}
+            Recent Sessions
           </h2>
           {recentSessions.length === 0 ? (
-            <div className="text-gray-500 text-sm text-center py-8">
+            <div className="text-muted text-sm text-center py-8">
               No quiz sessions yet. Start your first quiz!
             </div>
           ) : (
             <div className="space-y-2">
               {recentSessions.map((session) => {
                 const pct = Math.round((session.score / session.totalQuestions) * 100)
-                const badgeColor =
-                  pct >= 80
-                    ? 'bg-green-500/20 text-green-400'
-                    : pct >= 60
-                    ? 'bg-yellow-500/20 text-yellow-400'
-                    : 'bg-red-500/20 text-red-400'
+                const pctTone =
+                  pct >= 80 ? 'text-success' : pct >= 60 ? 'text-warning' : 'text-danger'
                 return (
                   <div
                     key={session.id}
-                    className="flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2.5"
+                    className="flex items-center justify-between bg-surface-elevated-2 rounded-md px-3 py-2.5"
                   >
                     <div>
-                      <div className="text-gray-300 text-sm capitalize font-medium">
+                      <div className="text-primary text-sm capitalize font-medium">
                         {session.mode} mode
                       </div>
-                      <div className="text-gray-500 text-xs">
+                      <div className="text-muted text-xs">
                         {formatDate(session.date)} · {formatTime(session.timeSpent)}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-gray-400 text-sm">
+                      <span className="text-secondary text-sm font-mono">
                         {session.score}/{session.totalQuestions}
                       </span>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${badgeColor}`}>
+                      <span
+                        className={`text-xs font-mono font-bold px-2 py-0.5 rounded-pill bg-surface-elevated ${pctTone}`}
+                      >
                         {pct}%
                       </span>
                     </div>
@@ -213,78 +253,54 @@ export default function Dashboard() {
               })}
             </div>
           )}
-        </div>
+        </Card>
       </div>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
-        <Link
-          href="/quiz"
-          className="flex items-center gap-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl p-4 font-semibold transition-all hover:scale-[1.02]"
-        >
-          <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl">
-            📝
-          </div>
-          <div>
-            <div className="font-semibold">Start Quiz</div>
-            <div className="text-blue-200 text-xs">Practice or Exam mode</div>
-          </div>
-        </Link>
-        <Link
-          href="/flashcards"
-          className="flex items-center gap-4 bg-purple-600 hover:bg-purple-500 text-white rounded-xl p-4 font-semibold transition-all hover:scale-[1.02]"
-        >
-          <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl">
-            🃏
-          </div>
-          <div>
-            <div className="font-semibold">Review Flashcards</div>
-            <div className="text-purple-200 text-xs">{dueCount} due today</div>
-          </div>
-        </Link>
-        <Link
-          href="/calculators"
-          className="flex items-center gap-4 bg-green-600 hover:bg-green-500 text-white rounded-xl p-4 font-semibold transition-all hover:scale-[1.02]"
-        >
-          <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl">
-            🔢
-          </div>
-          <div>
-            <div className="font-semibold">CEC Calculators</div>
-            <div className="text-green-200 text-xs">Demand, VD, Motors</div>
-          </div>
-        </Link>
+        {quickActions.map((action) => (
+          <Link key={action.href} href={action.href} className="block">
+            <Card
+              elevation="elev-1"
+              padding="md"
+              interactive
+              className="flex items-center gap-4 h-full"
+            >
+              <div
+                className="w-10 h-10 bg-surface-elevated-2 rounded-md flex items-center justify-center text-xl shrink-0"
+                aria-hidden="true"
+              >
+                {action.emoji}
+              </div>
+              <div>
+                <div className="font-display font-semibold text-primary">{action.title}</div>
+                <div className="text-secondary text-xs">{action.subtitle({ dueCount })}</div>
+              </div>
+            </Card>
+          </Link>
+        ))}
       </div>
 
       {/* Progress Overview */}
-      <div className="mt-6 bg-gray-900 border border-gray-700 rounded-xl p-5">
-        <h2 className="text-white font-semibold mb-4">Question Bank Coverage</h2>
+      <Card elevation="elev-1" padding="lg" className="mt-6">
+        <h2 className="text-primary font-display font-semibold mb-4">
+          Question Bank Coverage
+        </h2>
         <div className="flex flex-wrap gap-2">
-          {[
-            { label: 'Section 0 (Definitions)', count: 8 },
-            { label: 'Section 4 (Conductors)', count: 10 },
-            { label: 'Section 6 (Services)', count: 10 },
-            { label: 'Section 8 (Ampacity)', count: 20 },
-            { label: 'Section 10 (Grounding)', count: 10 },
-            { label: 'Section 12 (Wiring)', count: 8 },
-            { label: 'Section 14 (Protection)', count: 10 },
-            { label: 'Section 26 (Equipment)', count: 8 },
-            { label: 'Section 28 (Motors)', count: 16 },
-            { label: 'CEC Tables', count: 12 },
-            { label: "Ohm's Law & Power", count: 8 },
-          ].map((item) => (
+          {coverageSections.map((item) => (
             <div
               key={item.label}
-              className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-xs text-gray-300"
+              className="bg-surface-elevated-2 border border-subtle rounded-md px-3 py-1.5 text-xs text-primary"
             >
-              {item.label} · <span className="text-blue-400 font-semibold">{item.count}q</span>
+              {item.label} ·{' '}
+              <span className="text-accent font-mono font-semibold">{item.count}q</span>
             </div>
           ))}
         </div>
-        <div className="mt-3 text-gray-500 text-xs">
-          Total: 120 questions across all major CEC sections
+        <div className="mt-3 text-muted text-xs">
+          Total: <span className="font-mono">120</span> questions across all major CEC sections
         </div>
-      </div>
+      </Card>
     </div>
   )
 }
