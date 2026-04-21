@@ -1,7 +1,35 @@
 import type { Question } from '../../lib/types'
 import { section2QuizQuestions } from './section-02'
+import { section4QuizQuestions } from './section-04'
+import { section6QuizQuestions } from './section-06'
+import { section8QuizQuestions } from './section-08'
+import { section10QuizQuestions } from './section-10'
+import { section12QuizQuestions } from './section-12'
+import { section14QuizQuestions } from './section-14'
+import { section16QuizQuestions } from './section-16'
+import { section18QuizQuestions } from './section-18'
+import { section20QuizQuestions } from './section-20'
+import { section22QuizQuestions } from './section-22'
+import { section24QuizQuestions } from './section-24'
+import { section26QuizQuestions } from './section-26'
+import { section28QuizQuestions } from './section-28'
 
-export const generatedQuestions: Question[] = [...section2QuizQuestions]
+export const generatedQuestions: Question[] = [
+  ...section2QuizQuestions,
+  ...section4QuizQuestions,
+  ...section6QuizQuestions,
+  ...section8QuizQuestions,
+  ...section10QuizQuestions,
+  ...section12QuizQuestions,
+  ...section14QuizQuestions,
+  ...section16QuizQuestions,
+  ...section18QuizQuestions,
+  ...section20QuizQuestions,
+  ...section22QuizQuestions,
+  ...section24QuizQuestions,
+  ...section26QuizQuestions,
+  ...section28QuizQuestions,
+]
 
 export const generatedQuestionsBySection = generatedQuestions.reduce<Record<string, Question[]>>(
   (acc, q) => {
