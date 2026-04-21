@@ -122,7 +122,8 @@ function renderFile(section: string, questions: Question[]): string {
     `export const section${parseInt(section, 10)}QuizQuestions: Question[] = [`,
   ].join('\n')
   const body = questions.map(serializeQuestion).join(',\n')
-  return `${header}\n${body},\n]\n`
+  const trailingComma = questions.length > 0 ? ',\n' : ''
+  return `${header}\n${body}${trailingComma}]\n`
 }
 
 export interface WriteOutputArgs {
@@ -145,7 +146,7 @@ export interface WriteOutputReport {
 export function getExistingRuleNumbers(outputPath: string): Set<string> {
   const existing = readExistingQuestions(outputPath)
   const set = new Set<string>()
-  for (const q of existing) if (q.ruleReference) set.add(q.ruleReference)
+  for (const q of existing) if (q && q.ruleReference) set.add(q.ruleReference)
   return set
 }
 
