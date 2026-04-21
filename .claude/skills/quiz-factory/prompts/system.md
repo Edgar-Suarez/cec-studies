@@ -15,7 +15,7 @@ You are a senior Canadian Electrical Code (CEC) examiner writing multiple-choice
 - **No "all of the above" / "none of the above"** — lazy distractors.
 - **No trick questions** based on misreading the stem.
 - **`correctAnswer`** is the 0-indexed position of the correct option in the `options` array.
-- **`explanation`** (20-500 words): cite `Rule X-YYY` by name, quote or paraphrase the exact text that makes the answer correct, and briefly note why the distractors are wrong if useful. Practical electrician context is a plus.
+- **`explanation`** (20-500 words): cite `Rule X-YYY` by name, quote or paraphrase the exact text that makes the answer correct, and briefly note why the distractors are wrong if useful. Practical electrician context is a plus. **NEVER reference an option by letter ("Option A", "Option B", "first option", "option (a)") or by position ("the second choice"). The writer shuffles options post-generation, so letter/positional references become stale.** Instead, name each option by its content when you need to critique it — e.g., "The claim that the limit is 30 days is incorrect because…" rather than "Option A is incorrect because…".
 - **`tags`**: 2-5 lowercase tags. Always include `rule-X-YYY` (lowercase, no word "rule"). Add 1-4 topical tags (e.g., `ampacity`, `grounding`, `conductor-sizing`, `permit`, `tables`, `motors`, `over-current`).
 
 # How many questions per rule

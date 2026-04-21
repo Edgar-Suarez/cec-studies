@@ -7,6 +7,49 @@ function complexityToDifficulty(c: 'simple' | 'complex'): 'easy' | 'medium' | 'h
   return c === 'simple' ? 'easy' : 'medium'
 }
 
+// --- Deterministic shuffle -------------------------------------------------
+// Fixes LLM positional bias (correct answer tends to land in option A/B).
+// Seeded by `ruleNumber + question text` — stable across regenerations of the
+// same question, distributes uniformly across 0..3 over many questions.
+// NOTE: system.md forbids the LLM from referencing options by letter in the
+// explanation so the shuffle cannot invalidate explanation content.
+
+function fnv1aHash(s: string): number {
+  let h = 2166136261 >>> 0
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 16777619) >>> 0
+  }
+  return h >>> 0
+}
+
+function mulberry32(seed: number): () => number {
+  let a = seed >>> 0
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0
+    let t = a
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+function shuffleOptionsDeterministic(
+  options: readonly string[],
+  correctAnswer: number,
+  seedKey: string,
+): { options: string[]; correctAnswer: number } {
+  const rand = mulberry32(fnv1aHash(seedKey))
+  const indexed = options.map((item, originalIdx) => ({ item, originalIdx }))
+  for (let i = indexed.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1))
+    ;[indexed[i], indexed[j]] = [indexed[j], indexed[i]]
+  }
+  const shuffled = indexed.map((x) => x.item)
+  const newCorrectIdx = indexed.findIndex((x) => x.originalIdx === correctAnswer)
+  return { options: shuffled, correctAnswer: newCorrectIdx }
+}
+
 function materializeQuestion(
   v: ValidatedQuestion,
   section: string,
@@ -15,13 +58,21 @@ function materializeQuestion(
   const sectionTitle = SECTION_TITLES[section]
   if (!sectionTitle) throw new Error(`Unknown section: ${section}`)
   const paddedIdx = String(indexInFile + 1).padStart(3, '0')
+
+  // Deterministic shuffle of options to neutralize LLM positional bias.
+  const { options, correctAnswer } = shuffleOptionsDeterministic(
+    v.options,
+    v.correctAnswer,
+    `${v.ruleNumber}|${v.question}`,
+  )
+
   return {
     id: `s${section}-${paddedIdx}`,
     section,
     sectionTitle,
     question: v.question,
-    options: [...v.options],
-    correctAnswer: v.correctAnswer,
+    options,
+    correctAnswer,
     explanation: v.explanation,
     difficulty: complexityToDifficulty(v.ruleComplexity),
     tags: [...v.tags],
