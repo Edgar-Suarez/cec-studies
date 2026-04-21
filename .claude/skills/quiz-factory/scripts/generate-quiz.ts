@@ -9,6 +9,7 @@ import {
   writeOutput,
   defaultOutputPath,
   defaultErrorsPath,
+  getExistingRuleNumbers,
   type WriteOutputReport,
 } from './write-output'
 import { SECTION_TITLES } from '../../../../src/data/questions/section-titles'
@@ -187,6 +188,23 @@ async function processSection(
     console.log(`  Rules after --rule-filter: ${chunks.length}`)
   } else {
     console.log(`  Rules extracted: ${chunks.length}`)
+  }
+
+  // Append-safe mode: skip rules already covered in existing output file
+  // BEFORE calling the API (saves money on retries).
+  if (!args.overwrite && !args.dryRun) {
+    const outputPath = defaultOutputPath(section, args.quizzesDir)
+    const covered = getExistingRuleNumbers(outputPath)
+    if (covered.size > 0) {
+      const before = chunks.length
+      chunks = chunks.filter((c) => !covered.has(`Rule ${c.ruleNumber}`))
+      const skipped = before - chunks.length
+      if (skipped > 0) {
+        console.log(
+          `  Append-safe: skipping ${skipped} rules already covered (${chunks.length} to process, saves ~$${(skipped * 0.022).toFixed(2)} in API calls)`,
+        )
+      }
+    }
   }
 
   if (chunks.length === 0) {

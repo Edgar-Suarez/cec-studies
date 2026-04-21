@@ -142,6 +142,13 @@ export interface WriteOutputReport {
   finalQuestionCount: number
 }
 
+export function getExistingRuleNumbers(outputPath: string): Set<string> {
+  const existing = readExistingQuestions(outputPath)
+  const set = new Set<string>()
+  for (const q of existing) if (q.ruleReference) set.add(q.ruleReference)
+  return set
+}
+
 function readExistingQuestions(outputPath: string): Question[] {
   if (!existsSync(outputPath)) return []
   try {
