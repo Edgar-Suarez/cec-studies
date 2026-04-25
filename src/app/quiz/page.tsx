@@ -5,6 +5,7 @@ import { questions, allSections } from '../../data/questions'
 import type { Question, QuizSession } from '../../lib/types'
 import { saveSession, updateWeakSection, loadProgress } from '../../lib/storage'
 import Link from 'next/link'
+import { Badge, Button, Card, Progress } from '@/shared/components/ui'
 
 type QuizMode = 'practice' | 'exam' | 'weakness'
 type QuizState = 'setup' | 'quiz' | 'review' | 'done'
@@ -24,17 +25,10 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
-function DifficultyBadge({ difficulty }: { difficulty: Question['difficulty'] }) {
-  const map = {
-    easy: 'bg-green-500/20 text-green-400 border-green-500/30',
-    medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-    hard: 'bg-red-500/20 text-red-400 border-red-500/30',
-  }
-  return (
-    <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${map[difficulty]}`}>
-      {difficulty}
-    </span>
-  )
+const DIFFICULTY_VARIANT: Record<Question['difficulty'], 'success' | 'warning' | 'danger'> = {
+  easy: 'success',
+  medium: 'warning',
+  hard: 'danger',
 }
 
 export default function QuizPage() {
@@ -81,7 +75,7 @@ export default function QuizPage() {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [state, showExplanation, currentIndex, quizQuestions]
+    [state, showExplanation, currentIndex, quizQuestions],
   )
 
   useEffect(() => {
@@ -145,9 +139,7 @@ export default function QuizPage() {
   }
 
   function finishQuiz() {
-    const score = quizQuestions.filter(
-      (q) => answers[q.id] === q.correctAnswer
-    ).length
+    const score = quizQuestions.filter((q) => answers[q.id] === q.correctAnswer).length
 
     const session: QuizSession = {
       id: crypto.randomUUID(),
@@ -163,14 +155,7 @@ export default function QuizPage() {
     setState('done')
   }
 
-  function startReview() {
-    setCurrentIndex(0)
-    setReviewMode(true)
-    setState('quiz')
-  }
-
   const currentQuestion = quizQuestions[currentIndex]
-  const progress = quizQuestions.length > 0 ? (currentIndex / quizQuestions.length) * 100 : 0
 
   const finalScore = quizQuestions.filter((q) => answers[q.id] === q.correctAnswer).length
   const finalPct =
@@ -181,118 +166,110 @@ export default function QuizPage() {
     return (
       <div className="p-4 md:p-8 max-w-3xl mx-auto">
         <div className="flex items-center gap-3 mb-6">
-          <Link href="/" className="text-gray-400 hover:text-white">
+          <Link
+            href="/"
+            className="text-secondary hover:text-primary transition-colors duration-75"
+            aria-label="Back to dashboard"
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </Link>
-          <h1 className="text-2xl font-bold text-white">Quiz Setup</h1>
+          <h1 className="text-2xl font-display font-bold text-primary">Quiz Setup</h1>
         </div>
 
         {/* Mode selector */}
-        <div className="bg-gray-900 border border-gray-700 rounded-xl p-5 mb-5">
-          <h2 className="text-white font-semibold mb-3">Quiz Mode</h2>
+        <Card elevation="elev-1" padding="lg" className="mb-5">
+          <h2 className="text-primary font-display font-semibold mb-3">Quiz Mode</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {(
               [
-                {
-                  id: 'practice',
-                  label: 'Practice',
-                  desc: 'All questions, see explanations immediately',
-                  icon: '📚',
-                },
-                {
-                  id: 'exam',
-                  label: 'Exam Mode',
-                  desc: '60 questions, timed, review at end',
-                  icon: '⏱',
-                },
-                {
-                  id: 'weakness',
-                  label: 'Weakness Focus',
-                  desc: 'Focus on your weakest sections',
-                  icon: '🎯',
-                },
+                { id: 'practice', label: 'Practice', desc: 'All questions, see explanations immediately', icon: '📚' },
+                { id: 'exam', label: 'Exam Mode', desc: '60 questions, timed, review at end', icon: '⏱' },
+                { id: 'weakness', label: 'Weakness Focus', desc: 'Focus on your weakest sections', icon: '🎯' },
               ] as const
             ).map((m) => (
               <button
                 key={m.id}
                 onClick={() => setMode(m.id)}
-                className={`text-left p-4 rounded-xl border transition-all ${
+                className={`text-left p-4 rounded-md border transition-colors duration-75 ${
                   mode === m.id
-                    ? 'bg-blue-600/20 border-blue-500 text-white'
-                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-500'
+                    ? 'bg-surface-elevated-2 border-accent text-primary'
+                    : 'bg-surface-elevated border-subtle text-secondary hover:border-strong'
                 }`}
               >
-                <div className="text-2xl mb-2">{m.icon}</div>
+                <div className="text-2xl mb-2" aria-hidden="true">{m.icon}</div>
                 <div className="font-semibold text-sm mb-1">{m.label}</div>
-                <div className="text-xs opacity-70">{m.desc}</div>
+                <div className="text-xs text-muted">{m.desc}</div>
               </button>
             ))}
           </div>
-        </div>
+        </Card>
 
         {/* Section filter */}
-        <div className="bg-gray-900 border border-gray-700 rounded-xl p-5 mb-5">
+        <Card elevation="elev-1" padding="lg" className="mb-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-white font-semibold">Sections</h2>
-            <div className="flex gap-2">
-              <button
+            <h2 className="text-primary font-display font-semibold">Sections</h2>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setSelectedSections(new Set(allSections))}
-                className="text-xs text-blue-400 hover:text-blue-300"
               >
                 All
-              </button>
-              <span className="text-gray-600">·</span>
-              <button
-                onClick={() => setSelectedSections(new Set())}
-                className="text-xs text-gray-400 hover:text-gray-300"
-              >
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => setSelectedSections(new Set())}>
                 None
-              </button>
+              </Button>
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             {allSections.map((section) => {
               const count = questions.filter((q) => q.section === section).length
               const sampleQ = questions.find((q) => q.section === section)
+              const isSelected = selectedSections.has(section)
               return (
                 <button
                   key={section}
                   onClick={() => {
                     const next = new Set(selectedSections)
-                    if (next.has(section)) {
-                      next.delete(section)
-                    } else {
-                      next.add(section)
-                    }
+                    if (next.has(section)) next.delete(section)
+                    else next.add(section)
                     setSelectedSections(next)
                   }}
-                  className={`text-left px-3 py-2 rounded-lg border text-xs transition-all ${
-                    selectedSections.has(section)
-                      ? 'bg-blue-600/20 border-blue-500/60 text-blue-300'
-                      : 'bg-gray-800 border-gray-700 text-gray-500 hover:border-gray-500'
+                  className={`text-left px-3 py-2 rounded-md border text-xs transition-colors duration-75 ${
+                    isSelected
+                      ? 'bg-surface-elevated-2 border-accent text-accent'
+                      : 'bg-surface-elevated border-subtle text-secondary hover:border-strong'
                   }`}
                 >
-                  <div className="font-medium truncate">{sampleQ?.sectionTitle ?? section}</div>
-                  <div className="text-gray-500 text-xs mt-0.5">{count} questions</div>
+                  <div className="font-medium truncate">
+                    {sampleQ?.sectionTitle ?? section}
+                  </div>
+                  <div className="text-muted text-xs mt-0.5 font-mono">
+                    {count} questions
+                  </div>
                 </button>
               )
             })}
           </div>
-        </div>
+        </Card>
 
-        <div className="flex items-center justify-between">
-          <div className="text-gray-400 text-sm">
-            {questions.filter((q) => selectedSections.has(q.section)).length} questions available
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="text-secondary text-sm">
+            <span className="font-mono">
+              {questions.filter((q) => selectedSections.has(q.section)).length}
+            </span>{' '}
+            questions available
           </div>
-          <button
+          <Button
+            variant="primary"
+            size="lg"
             onClick={startQuiz}
             disabled={selectedSections.size === 0}
-            className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-6 py-3 rounded-xl transition-all hover:scale-[1.02]"
           >
             Start Quiz →
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -305,70 +282,66 @@ export default function QuizPage() {
 
     const optionStyle = (idx: number) => {
       if (selectedAnswer === null) {
-        return 'bg-gray-800 border-gray-700 text-gray-200 hover:border-blue-500 hover:bg-blue-600/10 cursor-pointer'
+        return 'bg-surface-elevated border-subtle text-primary hover:border-accent hover:bg-surface-elevated-2 cursor-pointer'
       }
       if (idx === currentQuestion.correctAnswer) {
-        return 'bg-green-500/20 border-green-500 text-green-300'
+        return 'bg-surface-elevated-2 border-success text-success'
       }
       if (idx === selectedAnswer && isWrong) {
-        return 'bg-red-500/20 border-red-500 text-red-300'
+        return 'bg-surface-elevated-2 border-danger text-danger'
       }
-      return 'bg-gray-800/50 border-gray-700 text-gray-500'
+      return 'bg-surface-elevated border-subtle text-muted'
     }
 
     return (
       <div className="p-4 md:p-8 max-w-3xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-4">
-          {!reviewMode && (
+          {!reviewMode ? (
             <button
               onClick={() => {
-                if (confirm('End quiz? Progress will be saved.')) {
-                  finishQuiz()
-                }
+                if (confirm('End quiz? Progress will be saved.')) finishQuiz()
               }}
-              className="text-gray-400 hover:text-white"
+              className="text-secondary hover:text-primary transition-colors duration-75"
+              aria-label="End quiz"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-          )}
+          ) : null}
           <div className="flex-1">
-            <div className="flex justify-between text-sm text-gray-400 mb-1.5">
+            <div className="flex justify-between text-sm text-secondary mb-1.5 font-mono">
               <span>
                 Question {currentIndex + 1} of {quizQuestions.length}
               </span>
-              {mode === 'exam' && (
-                <span className="font-mono text-blue-400">{formatTime(timeElapsed)}</span>
-              )}
+              {mode === 'exam' ? (
+                <span className="text-accent">{formatTime(timeElapsed)}</span>
+              ) : null}
             </div>
-            <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-blue-500 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+            <Progress value={currentIndex} max={quizQuestions.length} size="sm" />
           </div>
         </div>
 
         {/* Question card */}
-        <div className="bg-gray-900 border border-gray-700 rounded-xl p-5 mb-4">
-          <div className="flex items-start justify-between gap-4 mb-4">
+        <Card elevation="elev-1" padding="lg" className="mb-4">
+          <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
             <div>
-              <div className="text-blue-400 text-xs font-medium mb-1">
+              <div className="text-accent text-xs font-mono font-medium mb-1">
                 Section {currentQuestion.section} — {currentQuestion.sectionTitle}
               </div>
-              <DifficultyBadge difficulty={currentQuestion.difficulty} />
+              <Badge variant={DIFFICULTY_VARIANT[currentQuestion.difficulty]}>
+                {currentQuestion.difficulty}
+              </Badge>
             </div>
-            <div className="text-gray-500 text-xs shrink-0">
+            <div className="text-muted text-xs shrink-0 font-mono">
               Press 1-4 to answer
             </div>
           </div>
-          <p className="text-white text-base md:text-lg font-medium leading-relaxed">
+          <p className="text-primary text-base md:text-lg font-medium leading-relaxed">
             {currentQuestion.question}
           </p>
-        </div>
+        </Card>
 
         {/* Options */}
         <div className="space-y-2.5 mb-4">
@@ -377,175 +350,179 @@ export default function QuizPage() {
               key={idx}
               onClick={() => handleAnswer(idx)}
               disabled={selectedAnswer !== null}
-              className={`w-full text-left p-4 rounded-xl border transition-all font-medium flex items-start gap-3 ${optionStyle(idx)}`}
+              className={`w-full text-left p-4 rounded-md border transition-colors duration-75 font-medium flex items-start gap-3 ${optionStyle(idx)}`}
             >
-              <span className="shrink-0 w-7 h-7 rounded-lg bg-gray-700/50 flex items-center justify-center text-sm font-bold text-gray-300">
+              <span className="shrink-0 w-7 h-7 rounded-sm bg-surface-elevated-2 flex items-center justify-center text-sm font-mono font-bold text-secondary">
                 {idx + 1}
               </span>
               <span className="text-sm leading-relaxed">{option}</span>
-              {selectedAnswer !== null && idx === currentQuestion.correctAnswer && (
-                <span className="ml-auto text-green-400 shrink-0">✓</span>
-              )}
-              {selectedAnswer === idx && isWrong && (
-                <span className="ml-auto text-red-400 shrink-0">✗</span>
-              )}
+              {selectedAnswer !== null && idx === currentQuestion.correctAnswer ? (
+                <span className="ml-auto text-success shrink-0">✓</span>
+              ) : null}
+              {selectedAnswer === idx && isWrong ? (
+                <span className="ml-auto text-danger shrink-0">✗</span>
+              ) : null}
             </button>
           ))}
         </div>
 
         {/* Explanation */}
-        {showExplanation && (
+        {showExplanation ? (
           <div
-            className={`rounded-xl border p-4 mb-4 ${
-              isCorrect
-                ? 'bg-green-500/10 border-green-500/30'
-                : 'bg-red-500/10 border-red-500/30'
+            className={`rounded-md border p-4 mb-4 bg-surface-elevated-2 ${
+              isCorrect ? 'border-success' : 'border-danger'
             }`}
           >
             <div
-              className={`font-semibold mb-2 flex items-center gap-2 ${
-                isCorrect ? 'text-green-400' : 'text-red-400'
+              className={`font-mono font-semibold uppercase tracking-wide text-xs mb-2 flex items-center gap-2 ${
+                isCorrect ? 'text-success' : 'text-danger'
               }`}
             >
               {isCorrect ? '✓ Correct!' : '✗ Incorrect'}
             </div>
-            <p className="text-gray-300 text-sm leading-relaxed">
+            <p className="text-primary text-sm leading-relaxed">
               {currentQuestion.explanation}
             </p>
-            {currentQuestion.tags.length > 0 && (
+            {currentQuestion.tags.length > 0 ? (
               <div className="flex flex-wrap gap-1.5 mt-3">
                 {currentQuestion.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs bg-gray-700 text-gray-400 px-2 py-0.5 rounded"
-                  >
+                  <Badge key={tag} variant="default">
                     {tag}
-                  </span>
+                  </Badge>
                 ))}
               </div>
-            )}
+            ) : null}
           </div>
-        )}
+        ) : null}
 
         {/* Next button */}
-        {showExplanation && (
-          <button
-            onClick={reviewMode ? () => {
-              if (currentIndex + 1 >= quizQuestions.length) {
-                setState('done')
-              } else {
-                setCurrentIndex((i) => i + 1)
-                setSelectedAnswer(answers[quizQuestions[currentIndex + 1]?.id] ?? null)
-                setShowExplanation(true)
-              }
-            } : nextQuestion}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all"
+        {showExplanation ? (
+          <Button
+            variant="primary"
+            size="lg"
+            className="w-full"
+            onClick={
+              reviewMode
+                ? () => {
+                    if (currentIndex + 1 >= quizQuestions.length) {
+                      setState('done')
+                    } else {
+                      setCurrentIndex((i) => i + 1)
+                      setSelectedAnswer(answers[quizQuestions[currentIndex + 1]?.id] ?? null)
+                      setShowExplanation(true)
+                    }
+                  }
+                : nextQuestion
+            }
           >
             {currentIndex + 1 >= quizQuestions.length
-              ? reviewMode ? 'Finish Review' : 'See Results'
+              ? reviewMode
+                ? 'Finish Review'
+                : 'See Results'
               : 'Next Question →'}
-          </button>
-        )}
+          </Button>
+        ) : null}
       </div>
     )
   }
 
   // DONE SCREEN
   if (state === 'done') {
-    const wrongQuestions = quizQuestions.filter(
-      (q) => answers[q.id] !== q.correctAnswer
-    )
+    const wrongQuestions = quizQuestions.filter((q) => answers[q.id] !== q.correctAnswer)
+    const accuracyTone =
+      finalPct >= 80 ? 'text-success' : finalPct >= 60 ? 'text-warning' : 'text-danger'
 
     return (
       <div className="p-4 md:p-8 max-w-3xl mx-auto">
         <div className="text-center mb-8">
-          <div className="text-6xl mb-4">
+          <div className="text-6xl mb-4" aria-hidden="true">
             {finalPct >= 80 ? '🎉' : finalPct >= 60 ? '💪' : '📚'}
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Quiz Complete!</h1>
-          <div
-            className={`text-5xl font-bold mb-2 ${
-              finalPct >= 80
-                ? 'text-green-400'
-                : finalPct >= 60
-                ? 'text-yellow-400'
-                : 'text-red-400'
-            }`}
-          >
-            {finalPct}%
+          <h1 className="text-3xl font-display font-bold text-primary mb-2">Quiz Complete!</h1>
+          <div className={`text-5xl font-mono font-bold mb-2 ${accuracyTone}`}>{finalPct}%</div>
+          <div className="text-secondary">
+            <span className="font-mono">{finalScore}</span> correct out of{' '}
+            <span className="font-mono">{quizQuestions.length}</span> questions
           </div>
-          <div className="text-gray-400">
-            {finalScore} correct out of {quizQuestions.length} questions
-          </div>
-          <div className="text-gray-500 text-sm mt-1">Time: {formatTime(timeElapsed)}</div>
+          <div className="text-muted text-sm mt-1 font-mono">Time: {formatTime(timeElapsed)}</div>
         </div>
 
         <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3 text-center">
-            <div className="text-2xl font-bold text-green-400">{finalScore}</div>
-            <div className="text-green-300/70 text-xs">Correct</div>
-          </div>
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 text-center">
-            <div className="text-2xl font-bold text-red-400">{quizQuestions.length - finalScore}</div>
-            <div className="text-red-300/70 text-xs">Incorrect</div>
-          </div>
-          <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3 text-center">
-            <div className="text-2xl font-bold text-blue-400">{formatTime(timeElapsed)}</div>
-            <div className="text-blue-300/70 text-xs">Time</div>
-          </div>
+          <Card elevation="elev-1" padding="md" className="text-center">
+            <div className="text-2xl font-mono font-bold text-success">{finalScore}</div>
+            <div className="text-secondary text-xs">Correct</div>
+          </Card>
+          <Card elevation="elev-1" padding="md" className="text-center">
+            <div className="text-2xl font-mono font-bold text-danger">
+              {quizQuestions.length - finalScore}
+            </div>
+            <div className="text-secondary text-xs">Incorrect</div>
+          </Card>
+          <Card elevation="elev-1" padding="md" className="text-center">
+            <div className="text-2xl font-mono font-bold text-accent">
+              {formatTime(timeElapsed)}
+            </div>
+            <div className="text-secondary text-xs">Time</div>
+          </Card>
         </div>
 
-        {wrongQuestions.length > 0 && (
-          <div className="bg-gray-900 border border-gray-700 rounded-xl p-4 mb-5">
-            <h2 className="text-white font-semibold mb-3">
+        {wrongQuestions.length > 0 ? (
+          <Card elevation="elev-1" padding="md" className="mb-5">
+            <h2 className="text-primary font-display font-semibold mb-3">
               Missed Questions ({wrongQuestions.length})
             </h2>
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {wrongQuestions.map((q) => (
                 <div key={q.id} className="flex items-start gap-2 text-sm">
-                  <span className="text-red-400 shrink-0">✗</span>
+                  <span className="text-danger shrink-0">✗</span>
                   <div>
-                    <div className="text-gray-300 leading-tight">{q.question.slice(0, 80)}...</div>
-                    <div className="text-gray-500 text-xs">
+                    <div className="text-primary leading-tight">
+                      {q.question.slice(0, 80)}...
+                    </div>
+                    <div className="text-muted text-xs">
                       {q.sectionTitle} · Correct: {q.options[q.correctAnswer]}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          </Card>
+        ) : null}
 
         <div className="grid grid-cols-2 gap-3">
-          <button
+          <Button
+            variant="secondary"
+            size="lg"
             onClick={() => {
               setState('setup')
               setQuizQuestions([])
             }}
-            className="bg-gray-800 hover:bg-gray-700 text-white font-semibold py-3 rounded-xl transition-all"
           >
             New Quiz
-          </button>
-          {wrongQuestions.length > 0 && (
-            <button
+          </Button>
+          {wrongQuestions.length > 0 ? (
+            <Button
+              variant="primary"
+              size="lg"
               onClick={() => {
                 setQuizQuestions(wrongQuestions)
                 setCurrentIndex(0)
-                setSelectedAnswer(wrongQuestions[0] ? answers[wrongQuestions[0].id] ?? null : null)
+                setSelectedAnswer(
+                  wrongQuestions[0] ? answers[wrongQuestions[0].id] ?? null : null,
+                )
                 setShowExplanation(true)
                 setReviewMode(true)
                 setState('quiz')
               }}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-all"
             >
               Review Wrong Answers
-            </button>
-          )}
+            </Button>
+          ) : null}
         </div>
 
         <Link
           href="/"
-          className="block text-center text-gray-400 hover:text-gray-300 mt-4 text-sm"
+          className="block text-center text-secondary hover:text-primary mt-4 text-sm transition-colors duration-75"
         >
           ← Back to Dashboard
         </Link>
