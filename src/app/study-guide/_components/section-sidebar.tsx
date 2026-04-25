@@ -34,7 +34,7 @@ export function SectionSidebar({ currentSectionId }: SectionSidebarProps) {
 
   return (
     <aside className="lg:w-72 shrink-0">
-      <div className="text-xs text-gray-500 uppercase tracking-wider font-semibold mb-3">
+      <div className="text-xs text-muted uppercase tracking-wider font-semibold mb-3 font-mono">
         CEC Sections
       </div>
 
@@ -47,14 +47,14 @@ export function SectionSidebar({ currentSectionId }: SectionSidebarProps) {
             <Link
               key={s.id}
               href={`/study-guide/${s.id}`}
-              className={`block w-full text-left px-4 py-3 rounded-xl border transition-all ${
+              className={`block w-full text-left px-4 py-3 rounded-lg border transition-colors duration-75 ${
                 isActive
-                  ? 'bg-blue-600/20 border-blue-500/60 text-blue-300'
-                  : 'bg-gray-800/50 border-gray-700 text-gray-300 hover:border-gray-500 hover:bg-gray-800'
+                  ? 'bg-surface-elevated-2 border-accent text-accent'
+                  : 'bg-surface-elevated border-subtle text-primary hover:border-strong hover:bg-surface-elevated-2'
               }`}
             >
               <div className="font-semibold text-sm">{s.title}</div>
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-xs text-muted mt-1 font-mono">
                 {s.topicCount} topics · {questionCount} questions
               </div>
             </Link>
@@ -66,7 +66,7 @@ export function SectionSidebar({ currentSectionId }: SectionSidebarProps) {
           return (
             <div
               key={id}
-              className="w-full text-left px-4 py-3 rounded-xl border border-gray-800 text-gray-600 opacity-50"
+              className="w-full text-left px-4 py-3 rounded-lg border border-subtle text-muted opacity-60"
             >
               <div className="font-semibold text-sm">
                 Section {id} — {sample?.sectionTitle ?? 'Coming Soon'}

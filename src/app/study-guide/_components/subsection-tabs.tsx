@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { StudyGuideSubsection } from '../../../lib/types'
+import { Button } from '@/shared/components/ui'
 import { LazyDiagrama, LazySketch, LazyInfografia } from './lazy-visuals'
 
 type Tab = 'explanation' | 'scenario' | 'keypoints' | 'diagram' | 'sketch'
@@ -35,45 +36,42 @@ export function SubsectionTabs({ subsection }: SubsectionTabsProps) {
 
   return (
     <>
-      <div className="flex border-b border-gray-700">
+      <div className="flex gap-1 px-2 py-2 border-b border-subtle bg-surface-elevated-2 overflow-x-auto">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab.id}
-            type="button"
+            variant={activeTab === tab.id ? 'primary' : 'ghost'}
+            size="sm"
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 px-4 py-2.5 text-sm font-medium transition-all ${
-              activeTab === tab.id
-                ? 'text-blue-400 border-b-2 border-blue-400 bg-blue-500/5'
-                : 'text-gray-500 hover:text-gray-300'
-            }`}
+            className="whitespace-nowrap"
           >
             {tab.label}
-          </button>
+          </Button>
         ))}
       </div>
 
       <div className="p-5">
-        {activeTab === 'explanation' && (
+        {activeTab === 'explanation' ? (
           <div>
-            {hasInfoCards && <LazyInfografia cards={subsection.infoCards!} />}
+            {hasInfoCards ? <LazyInfografia cards={subsection.infoCards!} /> : null}
             <div className="prose prose-invert prose-sm max-w-none">
               {subsection.explanation.split('\n\n').map((paragraph, i) => (
-                <p key={i} className="text-gray-300 leading-relaxed mb-3 last:mb-0">
+                <p key={i} className="text-primary leading-relaxed mb-3 last:mb-0">
                   {paragraph.split('\n').map((line, j, arr) => (
                     <span key={j}>
                       {line}
-                      {j < arr.length - 1 && <br />}
+                      {j < arr.length - 1 ? <br /> : null}
                     </span>
                   ))}
                 </p>
               ))}
             </div>
           </div>
-        )}
+        ) : null}
 
-        {activeTab === 'scenario' && (
+        {activeTab === 'scenario' ? (
           <div className="space-y-3">
-            <div className="flex items-center gap-2 text-yellow-400 text-xs font-semibold uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-warning text-xs font-semibold uppercase tracking-wider font-mono">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -85,16 +83,16 @@ export function SubsectionTabs({ subsection }: SubsectionTabsProps) {
               Real-World Scenario
             </div>
             {subsection.fieldScenario.split('\n\n').map((paragraph, i) => (
-              <p key={i} className="text-gray-300 leading-relaxed text-sm">
+              <p key={i} className="text-primary leading-relaxed text-sm">
                 {paragraph}
               </p>
             ))}
           </div>
-        )}
+        ) : null}
 
-        {activeTab === 'keypoints' && (
+        {activeTab === 'keypoints' ? (
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-green-400 text-xs font-semibold uppercase tracking-wider mb-3">
+            <div className="flex items-center gap-2 text-success text-xs font-semibold uppercase tracking-wider font-mono mb-3">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -109,9 +107,9 @@ export function SubsectionTabs({ subsection }: SubsectionTabsProps) {
               {subsection.keyPoints.map((point, i) => (
                 <li
                   key={i}
-                  className="flex items-start gap-3 text-sm text-gray-300 bg-gray-900/50 rounded-lg px-4 py-3 border border-gray-700/50"
+                  className="flex items-start gap-3 text-sm text-primary bg-surface-elevated-2 rounded-md px-4 py-3 border border-subtle"
                 >
-                  <span className="text-green-400 font-bold mt-0.5 shrink-0">
+                  <span className="text-success font-mono font-bold mt-0.5 shrink-0">
                     {i + 1}.
                   </span>
                   <span className="leading-relaxed">{point}</span>
@@ -119,15 +117,15 @@ export function SubsectionTabs({ subsection }: SubsectionTabsProps) {
               ))}
             </ul>
           </div>
-        )}
+        ) : null}
 
-        {activeTab === 'diagram' && hasDiagram && (
+        {activeTab === 'diagram' && hasDiagram ? (
           <LazyDiagrama chart={subsection.diagramaMermaid} />
-        )}
+        ) : null}
 
-        {activeTab === 'sketch' && hasSketch && (
+        {activeTab === 'sketch' && hasSketch ? (
           <LazySketch data={subsection.sketchData!} />
-        )}
+        ) : null}
       </div>
     </>
   )

@@ -18,7 +18,7 @@ import dynamic from 'next/dynamic'
  */
 
 const loadingFallback = (label: string) => (
-  <div className="rounded-2xl border border-gray-700 bg-gray-900/40 p-6 text-center text-xs text-gray-500">
+  <div className="rounded-xl border border-subtle bg-surface-elevated-2 p-6 text-center text-xs text-muted">
     Loading {label}…
   </div>
 )
