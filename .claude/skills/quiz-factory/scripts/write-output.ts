@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { SECTION_TITLES } from '../../../../src/data/questions/section-titles'
+import { SECTION_TITLES } from '../../../../src/data/quizzes/section-titles'
 import type { Question, RuleProcessingResult, ValidatedQuestion } from './types'
 
 function complexityToDifficulty(c: 'simple' | 'complex'): 'easy' | 'medium' | 'hard' {

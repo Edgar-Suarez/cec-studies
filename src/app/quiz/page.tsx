@@ -2,14 +2,12 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { questions, allSections } from '../../data/questions'
-import { generatedQuestions, generatedSections } from '../../data/quizzes'
 import type { Question, QuizSession } from '../../lib/types'
 import { saveSession, updateWeakSection, loadProgress } from '../../lib/storage'
 import Link from 'next/link'
 
 type QuizMode = 'practice' | 'exam' | 'weakness'
 type QuizState = 'setup' | 'quiz' | 'review' | 'done'
-type QuizSource = 'human' | 'generated'
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr]
@@ -40,24 +38,10 @@ function DifficultyBadge({ difficulty }: { difficulty: Question['difficulty'] })
 }
 
 export default function QuizPage() {
-  const [source, setSource] = useState<QuizSource>('human')
   const [state, setState] = useState<QuizState>('setup')
   const [mode, setMode] = useState<QuizMode>('practice')
   const [selectedSections, setSelectedSections] = useState<Set<string>>(new Set(allSections))
 
-  const pool = source === 'generated' ? generatedQuestions : questions
-  const sectionList = source === 'generated' ? generatedSections : allSections
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const params = new URLSearchParams(window.location.search)
-    const src = params.get('source')
-    if (src === 'generated' || src === 'human') {
-      setSource(src)
-      const next = src === 'generated' ? generatedSections : allSections
-      setSelectedSections(new Set(next))
-    }
-  }, [])
   const [quizQuestions, setQuizQuestions] = useState<Question[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, number>>({})
@@ -106,9 +90,7 @@ export default function QuizPage() {
   }, [handleKeyDown])
 
   function getQuizQuestions(): Question[] {
-    let pool = (source === 'generated' ? generatedQuestions : questions).filter(
-      (q) => selectedSections.has(q.section),
-    )
+    let pool = questions.filter((q) => selectedSections.has(q.section))
 
     if (mode === 'weakness') {
       const progress = loadProgress()
@@ -207,47 +189,6 @@ export default function QuizPage() {
           <h1 className="text-2xl font-bold text-white">Quiz Setup</h1>
         </div>
 
-        {/* Source toggle (human / generated) */}
-        <div className="bg-gray-900 border border-gray-700 rounded-xl p-4 mb-5">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div>
-              <div className="text-white text-sm font-semibold">
-                Question source:{' '}
-                <span className={source === 'generated' ? 'text-orange-400' : 'text-blue-400'}>
-                  {source === 'generated' ? 'AI-Generated (audit)' : 'Human-written'}
-                </span>
-              </div>
-              <div className="text-gray-400 text-xs mt-0.5">
-                {source === 'generated'
-                  ? `${pool.length} questions from quiz-factory pipeline`
-                  : `${pool.length} questions curated by hand`}
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <a
-                href="/quiz?source=human"
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                  source === 'human'
-                    ? 'bg-blue-600/20 border-blue-500 text-blue-300'
-                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-white'
-                }`}
-              >
-                Human
-              </a>
-              <a
-                href="/quiz?source=generated"
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                  source === 'generated'
-                    ? 'bg-orange-500/20 border-orange-500/60 text-orange-300'
-                    : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-white'
-                }`}
-              >
-                Generated
-              </a>
-            </div>
-          </div>
-        </div>
-
         {/* Mode selector */}
         <div className="bg-gray-900 border border-gray-700 rounded-xl p-5 mb-5">
           <h2 className="text-white font-semibold mb-3">Quiz Mode</h2>
@@ -297,7 +238,7 @@ export default function QuizPage() {
             <h2 className="text-white font-semibold">Sections</h2>
             <div className="flex gap-2">
               <button
-                onClick={() => setSelectedSections(new Set(sectionList))}
+                onClick={() => setSelectedSections(new Set(allSections))}
                 className="text-xs text-blue-400 hover:text-blue-300"
               >
                 All
@@ -312,9 +253,9 @@ export default function QuizPage() {
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            {sectionList.map((section) => {
-              const count = pool.filter((q) => q.section === section).length
-              const sampleQ = pool.find((q) => q.section === section)
+            {allSections.map((section) => {
+              const count = questions.filter((q) => q.section === section).length
+              const sampleQ = questions.find((q) => q.section === section)
               return (
                 <button
                   key={section}
@@ -343,7 +284,7 @@ export default function QuizPage() {
 
         <div className="flex items-center justify-between">
           <div className="text-gray-400 text-sm">
-            {pool.filter((q) => selectedSections.has(q.section)).length} questions available
+            {questions.filter((q) => selectedSections.has(q.section)).length} questions available
           </div>
           <button
             onClick={startQuiz}

@@ -1,4 +1,4 @@
-import type { Question } from '../../lib/types'
+import type { Question } from '../../../lib/types'
 
 // =============================================================================
 // SECTION 2 — General Rules (CEC 2021, CSA C22.1:21, pages 70–77)

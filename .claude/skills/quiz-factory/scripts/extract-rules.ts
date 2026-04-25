@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process'
 import { existsSync, readdirSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import type { RuleChunk, RuleComplexity } from './types'
-import { SECTION_TITLES } from '../../../../src/data/questions/section-titles'
+import { SECTION_TITLES } from '../../../../src/data/quizzes/section-titles'
 
 export function resolvePdfPath(section: string, pdfDir?: string): string {
   const dir = pdfDir ?? findFuentesDir()

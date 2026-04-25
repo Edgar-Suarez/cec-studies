@@ -1,4 +1,4 @@
-import type { Question } from '../../lib/types'
+import type { Question } from '../../../lib/types'
 
 // =============================================================================
 // SECTION 4 — Conductors (CEC 2021, CSA C22.1:21, pages 78–85)
