@@ -92,13 +92,13 @@ const navItems = [
 
 function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700 z-50 md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 bg-surface-elevated border-t border-subtle z-50 md:hidden">
       <div className="flex justify-around items-center h-16 px-2">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg text-gray-400 hover:text-blue-400 hover:bg-gray-800 transition-all min-w-0"
+            className="flex flex-col items-center gap-1 px-3 py-2 rounded-md text-secondary hover:text-accent hover:bg-surface-elevated-2 transition-colors duration-75 min-w-0"
           >
             {item.icon}
             <span className="text-xs font-medium truncate">{item.shortLabel}</span>
@@ -111,15 +111,18 @@ function BottomNav() {
 
 function SideNav() {
   return (
-    <aside className="hidden md:flex flex-col w-56 min-h-screen bg-gray-900 border-r border-gray-700 fixed left-0 top-0 z-40">
-      <div className="p-4 border-b border-gray-700">
+    <aside className="hidden md:flex flex-col w-56 min-h-screen bg-surface-elevated border-r border-subtle fixed left-0 top-0 z-40">
+      <div className="p-4 border-b border-subtle">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">⚡</span>
+          <div
+            className="w-8 h-8 bg-accent rounded-md flex items-center justify-center"
+            aria-hidden="true"
+          >
+            <span className="text-accent-contrast font-bold text-sm">⚡</span>
           </div>
           <div>
-            <div className="text-white font-bold text-sm">CEC Study</div>
-            <div className="text-gray-400 text-xs">Trainer</div>
+            <div className="text-primary font-display font-bold text-sm">CEC Study</div>
+            <div className="text-secondary text-xs">Trainer</div>
           </div>
         </div>
       </div>
@@ -128,15 +131,17 @@ function SideNav() {
           <Link
             key={item.href}
             href={item.href}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-all font-medium text-sm"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-md text-secondary hover:text-primary hover:bg-surface-elevated-2 transition-colors duration-75 font-medium text-sm"
           >
             {item.icon}
             {item.label}
           </Link>
         ))}
       </nav>
-      <div className="p-3 border-t border-gray-700">
-        <div className="text-xs text-gray-500 text-center">CEC Study Trainer v1.0</div>
+      <div className="p-3 border-t border-subtle">
+        <div className="text-xs text-muted text-center font-mono">
+          CEC Study Trainer v1.0
+        </div>
       </div>
     </aside>
   )
@@ -148,12 +153,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`dark ${inter.variable} ${jetbrainsMono.variable} ${caveat.variable}`}>
-      <body className="bg-gray-950 text-gray-100 min-h-screen">
+    <html
+      lang="en"
+      className={`dark ${inter.variable} ${jetbrainsMono.variable} ${caveat.variable}`}
+    >
+      <body className="bg-surface-base text-primary min-h-screen">
         <SideNav />
-        <main className="md:ml-56 pb-20 md:pb-0 min-h-screen">
-          {children}
-        </main>
+        <main className="md:ml-56 pb-20 md:pb-0 min-h-screen">{children}</main>
         <BottomNav />
       </body>
     </html>
