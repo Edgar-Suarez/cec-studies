@@ -6,6 +6,17 @@
 
 ---
 
+## Estado del proyecto: CEC Study Trainer
+
+- **Producción:** https://naughty-banzai-79d76f.vercel.app (deploy `dpl_EcZuq2YT9crdkNWv8YJkGoQk7ioY`, 2026-04-25)
+- **Vercel project:** `edgar-suarezs-projects-c7d27b9e/naughty-banzai-79d76f` (renombrar a `cec-studies` cuando se tenga dominio custom)
+- **Branch en validación:** `claude/naughty-banzai-79d76f` — rediseño Fase 1+2+3 completo, dataset canónico de 1626 preguntas, no mergeado a `main` aún.
+- **Env vars en producción:** ninguna seteada. `/tutor` muestra mensaje de error sin crashear hasta que se agregue `ANTHROPIC_API_KEY` con `vercel env add`.
+- **Bitácora de validación:** `~/.claude/projects/-Users-papa-Dev-CEC-studies/memory/project/validation-log.md` (memoria personal de Edgar, fuera del repo).
+- **Modo actual:** validación de mercado. NO generar contenido nuevo, NO tocar features. Solo deploy, observar, documentar entrevistas.
+
+---
+
 ## Filosofia: Agent-First
 
 El usuario habla en lenguaje natural. Tu traduces a codigo.
